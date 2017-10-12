@@ -1,0 +1,12 @@
+attrs
+awesome-slugify
+click
+factory-boy
+funcy
+ipdb
+ipython
+jinja2
+lxml
+path.py
+pycorpora
+pyyaml
