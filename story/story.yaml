@@ -1,0 +1,17 @@
+include:
+  - locations
+  - characters
+  - inciting-incidents
+  - outcomes
+  - proverbs
+  - villains
+
+Begin:
+  - |
+    Our {'heroine' if Sex.Proto == 'female' else 'hero'}, {Name.Proto}, is {Subject.Proto}.
+
+    {Incident.Inciting.text.capitalize()} {Location.Setting}, {he.Proto} {HeroOutcome.Proto}.
+
+    Opposing {him.Proto}, {VillainTheme.Antag}.
+
+    At stake: {Proverb.lower()}

@@ -115,3 +115,21 @@ def markovify(items):
 
 def pareto_int(rng, shape=1):
     return math.floor(rng.paretovariate(shape))
+
+
+def ratchet(items):
+    def picker(context):
+        idx = context.setdefault('__ratchet__', -1)
+        rng = random.Random(context['seed'])
+        incr = pareto_int(rng)
+        idx = idx + incr
+        context['__ratchet__'] = idx
+        try:
+            result = items[idx]
+        except IndexError:
+            result = ''
+        if is_str(result):
+            result = render_ftemplate(result, context)
+        return result
+
+    return picker

@@ -1,9 +1,12 @@
 import contextlib
+from . import db
+from . import characters
 
 
 def get_context(seed):
     context = {}
     context['seed'] = seed
+    # context['C'] = db.Database(lambda ctx: characters.CharacterFactory.build(context=ctx), context)
     return context
 
 

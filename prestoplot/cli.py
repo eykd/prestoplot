@@ -2,6 +2,8 @@ import logging
 
 import click
 
+from .plotto import plotter
+from .plotto import grapher
 from . import story
 
 
@@ -27,3 +29,30 @@ def run(path, count, markov_start, markov_chainlen):
         ))
         if n + 1 != count:
             print('\n---\n')
+
+
+@main.command()
+@click.argument('path')
+@click.option('--points', default=None, type=int)
+def ratchet(path, points=None):
+    storyline = story.ratchet_story(
+        path,
+        max_yield=points,
+    )
+    for point in storyline:
+        print(point + '\n')
+
+
+@main.command()
+def plotto():
+    print(plotter.generate_plot())
+
+
+@main.command()
+@click.argument('inpath')
+@click.argument('outpath')
+def graph(inpath, outpath):
+    import networkx as nx
+
+    graph = grapher.graph_plotto(inpath)
+    nx.write_graphml(graph, outpath)

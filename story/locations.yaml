@@ -1,0 +1,33 @@
+Location:
+  - at the city docks
+  - in a far-off jungle
+  - in {Continental[key].a} {Continental[key]} country
+  - at the city slums
+  - in Chinatown
+  - in the desert
+  - at sea
+  - in a lost city
+  - at a secret base
+  - in the city entertainment district
+  - at the city warehouses
+  - in the air
+  - in the city red light district
+  - in the farmland
+  - in the forest
+  - in a distant city
+  - traveling cross-country
+  - at the city university
+  - at city hall
+  - in the city museums
+  - in the city skyscrapers
+  - in the Arctic
+  - in the Antarctic
+
+
+Continental:
+  - Asian
+  - European
+  - African
+  - Australian
+  - North American
+  - South American
