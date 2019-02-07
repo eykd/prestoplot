@@ -5,7 +5,7 @@ Boom! Instant plot!
 
 PrestoPlot is a tool for idea generation, name generation, and other tomfoolery when you should otherwise be writing.
 
-Goes best with the oracles from https://github.com/prestoplot-oracles/.
+Goes best with the oracles from https://github.com/eykd/prestoplot-oracles/.
 
 About
 -----
