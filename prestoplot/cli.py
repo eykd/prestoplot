@@ -13,10 +13,29 @@ def main(debug):
 
 @main.command()
 @click.argument('path')
-@click.option('--count', default=1)
-@click.option('--markov-start', default='')
-@click.option('--markov-chainlen', default=2)
+@click.option('--count', default=1, help="How many times to consult the oracle. Default 1.")
+@click.option('--markov-start', default='', help="Characters to start any Markov chains with, e.g. 'Ba'. Default ''.")
+@click.option('--markov-chainlen', default=2, help="Length of Markov chain links. Default 2.")
 def run(path, count, markov_start, markov_chainlen):
+    '''Parse and consult a YAML generative grammar oracle file.
+
+    The "oracle" consulted directly must include a `Begin:` stanza.
+
+    Example:
+
+    \b
+    $ cat names.yaml
+    Begin:
+      - "{Name}"
+    \b
+    Name:
+      - George
+      - Martha
+    \b
+    $ presto run names.yaml
+    George
+
+    '''
     if markov_start and len(markov_start) < markov_chainlen:
         raise click.UsageError(f'--markov-start must be at least as long as --markov-chainlen, currently {markov_chainlen}.')
     for n in range(count):
