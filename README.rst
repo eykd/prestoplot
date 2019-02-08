@@ -6,7 +6,9 @@ Boom! Instant plot!
 PrestoPlot is a tool for idea generation, name generation, and other tomfoolery
 when you should otherwise be writing.
 
-Goes best with the oracles from the `PrestoPlot Oracles` repository.
+Goes best with the oracles from the `PrestoPlot Oracles repository`_.
+
+.. _PrestoPlot Oracles repository: https://github.com/eykd/prestoplot-oracles/
 
 Install
 -------
@@ -39,8 +41,12 @@ The "oracle" consulted directly must include a `Begin:` stanza::
 About
 -----
 
-I wrote PrestoPlot to support idea generation and name generation for my new
-science fiction space opera series, `Salvage of Empire`_.
+I wrote PrestoPlot to support idea generation and name generation for my
+pulp-inspired science fiction space opera series, `Salvage of Empire`_:
+
+  When his brother-in-law threatens to reveal his terrible secret, Director Kolteo
+  Ais must sacrifice everything he has worked for to save the Galactic Empire—and
+  his marriage—from utter ruin.
 
 .. _Salvage of Empire: https://eykd.net/salvage/
 
