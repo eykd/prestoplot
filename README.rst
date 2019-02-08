@@ -8,6 +8,34 @@ when you should otherwise be writing.
 
 Goes best with the oracles from the `PrestoPlot Oracles` repository.
 
+Install
+-------
+
+PrestoPlot is available from PyPI::
+
+    pip install prestoplot
+
+Usage
+-----
+
+PrestoPlot may be invoked with the `presto` CLI script::
+
+    presto --help
+
+The "oracle" consulted directly must include a `Begin:` stanza::
+
+    $ cat names.yaml
+    Begin:
+      - "{Name}"
+
+    Name:
+      - George
+      - Martha
+
+    $ presto run names.yaml
+    George
+
+
 About
 -----
 
