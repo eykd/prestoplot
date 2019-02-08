@@ -1,0 +1,83 @@
+include:
+  - names
+
+Begin:
+  - "{Description}"
+
+Description:
+  - Our {hero.Protag}, {Name.Protag}, is {Person.Protag.a} {Person.Protag}. {He.Protag} carries a {Weapon.Protag}.
+
+Sex:
+  - male
+  - female
+
+hero:
+  - "{'heroine' if Sex[key] == 'female' else 'hero'}"
+
+Name:
+  - >
+    {Names[Sex[key]][key]}
+
+he:
+  - >
+    {'she' if Sex[key] == 'female' else 'he'}
+
+
+He:
+  - >
+    {'She' if Sex[key] == 'female' else 'He'}
+
+Person:
+  - "{Physical[key]}, {Status[key]} {Occupation[key]}, {Motivation}"
+
+
+Status:
+  - mode: pick
+  - married
+  - lawless
+  - erring
+  - benevolent
+  - resentful
+  - subtle
+  - normal
+  - "{Weapon[key]}-wielding"
+
+
+Motivation:
+  - mode: pick
+  - in love
+  - of ideals
+  - influenced by an obligation
+  - subjected to adverse conditions
+  - swayed by pretense
+  - influenced by the occult and the mysterious
+
+
+Physical:
+  - mode: pick
+  - "tall"
+  - "flashing-eyed"
+  - "supernaturally strong"
+  - "superbly fit"
+  - "lithe"
+  - "well-muscled"
+
+Weapon:
+  - mode: pick
+  - "sword"
+  - "pistol"
+  - "laser"
+  - "whip"
+  - "saber"
+  - "rifle"
+
+Occupation:
+  - mode: pick
+  - "scientist"
+  - "adventurer"
+  - "explorer"
+  - "archaeologist"
+  - "pilot"
+  - "soldier"
+  - "hunter"
+  - "millionaire"
