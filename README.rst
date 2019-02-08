@@ -20,11 +20,11 @@ PrestoPlot is available from PyPI::
 Usage
 -----
 
-PrestoPlot may be invoked with the `presto` CLI script::
+PrestoPlot may be invoked with the ``presto`` CLI script::
 
     presto --help
 
-The "oracle" consulted directly must include a `Begin:` stanza::
+The "oracle" consulted directly must include a ``Begin:`` stanza::
 
     $ cat names.yaml
     Begin:
@@ -51,7 +51,7 @@ pulp-inspired science fiction space opera series, `Salvage of Empire`_:
 .. _Salvage of Empire: https://eykd.net/salvage/
 
 The main feature right now is a generative grammar that uses a simple YAML-based
-language and `Python f-string syntax` to create "oracles" for idea generation.
+language and `Python f-string syntax`_ to create "oracles" for idea generation.
 
 .. _PrestoPlot Oracles: https://github.com/eykd/prestoplot-oracles/
 .. _Python f-string syntax: https://realpython.com/python-f-strings/
