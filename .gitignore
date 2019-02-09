@@ -6,3 +6,8 @@ lib
 share
 __pycache__
 *.egg-info
+.coverage
+.testmondata
+dist/
+ChangeLog
+AUTHORS
