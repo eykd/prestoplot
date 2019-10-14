@@ -2,19 +2,19 @@ import logging
 import math
 import random
 
-from . import contexts
-from . import markov
-from .texts import render_ftemplate, is_str
+from . import contexts, markov
+from .texts import is_text
 
 
 class Database:
-    def __init__(self, factory, context):
-        self.context = context
+    def __init__(self, factory, grammar_path, context):
         self.factory = factory
+        self.context = context
+        self.grammar_path = grammar_path
         self.cache = {}
 
     def __getattr__(self, attr):
-        logging.debug(f'Database.{attr}')
+        logging.debug(f"Database.{attr}")
         if attr not in self.cache:
             try:
                 result = self.__dict__[attr]
@@ -26,15 +26,14 @@ class Database:
                     with contexts.update_context(self.context, key=attr, seed=seed):
                         result = self.factory(self.context)
             self.cache[attr] = result
-        logging.debug(f'Database.{attr}->{self.cache[attr]}')
+        logging.debug(f"Database.{attr}->{self.cache[attr]}")
         return self.cache[attr]
 
     def __getitem__(self, key):
         try:
             return getattr(self, key)
         except TypeError:
-            # import ipdb; ipdb.set_trace()
-            logging.exception(f'No key {key!r} in {self!r}')
+            logging.exception(f"No key {key!r} in {self!r}")
             raise
 
     def __str__(self):
@@ -42,8 +41,9 @@ class Database:
 
 
 class Databag(dict):
-    def __init__(self, context, *args, **kwargs):
+    def __init__(self, grammar_path, context, *args, **kwargs):
         self.context = context
+        self.grammar_path = grammar_path
         super().__init__(*args, **kwargs)
 
     def __getattr__(self, attr):
@@ -55,15 +55,16 @@ class Databag(dict):
         except KeyError:
             logging.error(f'No key {key!r} in {", ".join(self.keys())}')
             raise
-        if is_str(value):
-            value = render_ftemplate(value, self.context)
+        if is_text(value):
+            value = value.render(self.context)
 
         return value
 
 
 class Datalist(list):
-    def __init__(self, context, *args, **kwargs):
+    def __init__(self, grammar_path, context, *args, **kwargs):
         self.context = context
+        self.grammar_path = grammar_path
         super().__init__(*args, **kwargs)
 
     def __getitem__(self, idx):
@@ -72,18 +73,18 @@ class Datalist(list):
         except KeyError:
             logging.error(f'No index {idx!r} in {", ".join(self)}')
             raise
-        if is_str(value):
-            value = render_ftemplate(value, self.context)
+        if is_text(value):
+            value = value.render(self.context)
 
         return value
 
 
 def choose(items):
     def chooser(context):
-        rng = random.Random(context['seed'])
+        rng = random.Random(context["seed"])
         result = rng.choice(items)
-        if is_str(result):
-            result = render_ftemplate(result, context)
+        if is_text(result):
+            result = result.render(context)
         return result
 
     return chooser
@@ -91,14 +92,14 @@ def choose(items):
 
 def pick(items):
     def picker(context):
-        rng = random.Random(context['seed'])
+        rng = random.Random(context["seed"])
         if len(items) > 1:
             idx = rng.randint(0, len(items) - 1)
         else:
             idx = 0
         result = items.pop(idx)
-        if is_str(result):
-            result = render_ftemplate(result, context)
+        if is_text(result):
+            result = result.render(context)
         return result
 
     return picker
@@ -106,9 +107,9 @@ def pick(items):
 
 def markovify(items):
     def generator(context):
-        gen = markov.NameGenerator(items, chainlen=context.get('markov_chainlen', 2))
+        gen = markov.NameGenerator(items, chainlen=context.get("markov_chainlen", 2))
 
-        return gen.get_random_name(start=context.get('start_markov', ''))
+        return gen.get_random_name(start=context.get("start_markov", ""))
 
     return generator
 
