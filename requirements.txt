@@ -1,0 +1,4 @@
+strictyaml
+jinja2
+funcy
+click
