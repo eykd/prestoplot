@@ -2,7 +2,7 @@ import collections
 import random
 
 
-class MarkovChainDict(collections.Mapping):
+class MarkovChainDict(collections.abc.Mapping):
     """A Markov Chain dictionary, for generating random strings.
 
     Derived from Peter Corbett's CGI random name generator:
