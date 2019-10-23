@@ -1,7 +1,7 @@
 import pathlib
 
 import pytest
-import strictyaml
+import yaml
 from prestoplot import storages
 
 PATH = pathlib.Path(__file__).parent
@@ -27,7 +27,7 @@ def test_file_storage_should_list_modules(fs):
 def test_file_storage_resolve_module_should_resolve_valid_names(fs):
     result = fs.resolve_module("names")
     with open(DATA / "names.yaml") as fi:
-        expected = strictyaml.load(fi.read()).data
+        expected = yaml.load(fi)
     assert result == expected
 
 
