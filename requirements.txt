@@ -1,4 +1,4 @@
-strictyaml
+pyyaml
 jinja2
 funcy
 click
