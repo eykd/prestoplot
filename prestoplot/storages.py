@@ -1,7 +1,7 @@
 import pathlib
 from copy import deepcopy
 
-import yaml
+import strictyaml
 
 
 class ModuleNotFoundError(Exception):
@@ -18,7 +18,7 @@ class FileStorage:
     def resolve_module(self, name):
         try:
             with open(self.path / f"{name}.yaml") as fi:
-                return yaml.safe_load(fi)
+                return strictyaml.load(fi.read()).data
         except FileNotFoundError:
             raise ModuleNotFoundError(name)
 
