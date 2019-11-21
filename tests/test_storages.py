@@ -9,9 +9,15 @@ PATH = pathlib.Path(__file__).parent
 DATA = PATH / "data"
 
 
-@pytest.fixture
-def fs():
-    return storages.FileStorage(str(DATA))
+@pytest.fixture(
+    params=[
+        storages.FileStorage,
+        storages.CachedFileStorage,
+        storages.CompilingFileStorage,
+    ]
+)
+def fs(request):
+    return request.param(str(DATA))
 
 
 def test_file_storage_should_store_path(fs):
@@ -27,7 +33,7 @@ def test_file_storage_should_list_modules(fs):
 def test_file_storage_resolve_module_should_resolve_valid_names(fs):
     result = fs.resolve_module("names")
     with open(DATA / "names.yaml") as fi:
-        expected = yaml.load(fi)
+        expected = yaml.safe_load(fi)
     assert result == expected
 
 
