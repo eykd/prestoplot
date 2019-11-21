@@ -1,4 +1,9 @@
 #!/bin/sh
 set -e
 set -x
-pytest --flake8 tests prestoplot --cov=prestoplot $@
+pytest \
+    --failed-first \
+    --exitfirst \
+    --cov=src \
+    --cov-branch \
+    --no-cov-on-fail $@
