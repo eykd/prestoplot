@@ -2,6 +2,7 @@ import pathlib
 
 import pytest
 import yaml
+
 from prestoplot import storages
 
 PATH = pathlib.Path(__file__).parent
