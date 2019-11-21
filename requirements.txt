@@ -1,3 +1,4 @@
+msgpack
 pyyaml
 jinja2
 funcy
