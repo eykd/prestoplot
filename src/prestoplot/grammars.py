@@ -1,4 +1,3 @@
-import logging
 import textwrap
 
 from funcy import is_list, is_mapping, isa
@@ -9,7 +8,6 @@ is_bool = isa(bool)
 
 
 def parse_grammar_file(storage, grammar_path, context, included=None):
-    logging.debug(f"Parsing grammar at {grammar_path}")
     if included is None:
         included = {grammar_path}
     else:
@@ -31,7 +29,6 @@ def parse_grammar_file(storage, grammar_path, context, included=None):
 
 
 def parse_render_strategy(render_mode, grammar_path):
-    logging.debug(f"Parsing render strategy {render_mode!r} at {grammar_path}")
     if render_mode == "ftemplate":
         return texts.render_ftemplate
     elif render_mode == "jinja2" or render_mode == "jinja":
@@ -43,14 +40,12 @@ def parse_render_strategy(render_mode, grammar_path):
 
 
 def parse_includes(storage, grammar_path, includes, context, included):
-    logging.debug(f"Parsing includes {includes!r} at {grammar_path}")
     for include in includes:
         context = parse_grammar_file(storage, include, context, included)
     return context
 
 
 def parse_data(data, grammar_path, context, render_strategy=texts.render_ftemplate):
-    logging.debug(f"Parsing data {data!r} at {grammar_path}")
     for key, value in data.items():
         context[key] = parse_value(
             value, f"{grammar_path}:{key}", context, render_strategy=render_strategy
@@ -68,7 +63,6 @@ def get_list_setting(value, grammar_path):
 
 
 def parse_value(value, grammar_path, context, render_strategy=texts.render_ftemplate):
-    logging.debug(f"Parsing value {value!r} at {grammar_path}")
     if is_list(value):
         mode, value = get_list_setting(value, grammar_path)
         if mode == "reuse":
