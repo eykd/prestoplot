@@ -14,7 +14,6 @@ class Database:
         self.cache = {}
 
     def __getattr__(self, attr):
-        logging.debug(f"Database.{attr}")
         if attr not in self.cache:
             try:
                 result = self.__dict__[attr]
@@ -26,7 +25,6 @@ class Database:
                     with contexts.update_context(self.context, key=attr, seed=seed):
                         result = self.factory(self.context)
             self.cache[attr] = result
-        logging.debug(f"Database.{attr}->{self.cache[attr]}")
         return self.cache[attr]
 
     def __getitem__(self, key):
