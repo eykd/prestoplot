@@ -1,7 +1,9 @@
 PrestoPlot
 ==========
 
-.. image:: https://img.shields.io/travis/eykd/prestoplot   :alt: Travis (.org)
+.. image:: https://travis-ci.org/eykd/prestoplot.svg?branch=master
+    :target: https://travis-ci.org/eykd/prestoplot
+    :alt: Build status
 
 A library and tool for text generation, inspired by Tracery.
 
