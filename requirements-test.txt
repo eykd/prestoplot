@@ -1,9 +1,9 @@
 -r requirements.txt
 flake8==3.7.9
 flake8-bugbear==19.8.0
-flake8-isort==2.7.0
+flake8-isort==2.8.0
 isort[requirements]==4.3.21
-pytest==5.2.4
+pytest==5.3.1
 pytest-cov==2.8.1
 pytest-flake8==1.0.4
 pytest-isort==0.3.1
