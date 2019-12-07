@@ -1,6 +1,9 @@
 PrestoPlot
 ==========
 
+.. image:: https://img.shields.io/pypi/v/prestoplot
+    :alt: PyPI version
+
 .. image:: https://travis-ci.org/eykd/prestoplot.svg?branch=master
     :target: https://travis-ci.org/eykd/prestoplot
     :alt: Build status
