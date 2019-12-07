@@ -5,6 +5,10 @@ PrestoPlot
     :target: https://travis-ci.org/eykd/prestoplot
     :alt: Build status
 
+.. image:: https://coveralls.io/repos/github/eykd/prestoplot/badge.svg?branch=master
+    :target: https://coveralls.io/github/eykd/prestoplot?branch=master
+    :alt: Test coverage
+
 A library and tool for text generation, inspired by Tracery.
 
 PrestoPlot is a tool for idea generation, name generation, and other tomfoolery
