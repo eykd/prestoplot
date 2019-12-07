@@ -1,7 +1,9 @@
 PrestoPlot
 ==========
 
-Boom! Instant plot!
+.. image:: https://img.shields.io/travis/eykd/prestoplot   :alt: Travis (.org)
+
+A library and tool for text generation, inspired by Tracery.
 
 PrestoPlot is a tool for idea generation, name generation, and other tomfoolery
 when you should otherwise be writing.
