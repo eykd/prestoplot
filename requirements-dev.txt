@@ -1,5 +1,5 @@
 -r requirements-test.txt
-ipython==7.10.1
+ipython==7.17.0
 pdbpp==0.10.2
-pre-commit==1.20.0
-twine==twine-3.0.0
+pre-commit==2.6.0
+twine==3.2.0
