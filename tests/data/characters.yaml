@@ -16,7 +16,7 @@ hero:
 
 Name:
   - >
-    {Names[Sex[key]][key]}
+    {NamesMarkov[Sex[key]][key]}
 
 he:
   - >

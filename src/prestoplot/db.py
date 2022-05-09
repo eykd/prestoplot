@@ -1,8 +1,7 @@
 import logging
 import math
-import random
 
-from . import contexts, markov
+from . import contexts, markov, seeds
 from .texts import is_text
 
 
@@ -79,7 +78,7 @@ class Datalist(list):
 
 def choose(items):
     def chooser(context):
-        rng = random.Random(context["seed"])
+        rng = seeds.get_rng(context["seed"])
         result = rng.choice(items)
         if is_text(result):
             result = result.render(context)
@@ -90,7 +89,7 @@ def choose(items):
 
 def pick(items):
     def picker(context):
-        rng = random.Random(context["seed"])
+        rng = seeds.get_rng(context["seed"])
         if len(items) > 1:
             idx = rng.randint(0, len(items) - 1)
         else:
@@ -107,7 +106,9 @@ def markovify(items):
     def generator(context):
         gen = markov.NameGenerator(items, chainlen=context.get("markov_chainlen", 2))
 
-        return gen.get_random_name(start=context.get("start_markov", ""))
+        return gen.get_random_name(
+            start=context.get("start_markov", ""), seed=context["seed"]
+        )
 
     return generator
 

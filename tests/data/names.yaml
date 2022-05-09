@@ -7,3 +7,51 @@ Names:
     - Emma
     - Olivia
     - Ava
+
+
+NamesMarkov:
+  male:
+    - mode: markov
+    - Noah
+    - Liam
+    - William
+    - Mason
+    - James
+    - Benjamin
+    - Jacob
+    - Michael
+    - Elijah
+    - Ethan
+    - Alexander
+    - Oliver
+    - Daniel
+    - Lucas
+    - Matthew
+    - Aiden
+    - Jackson
+    - Logan
+    - David
+    - Joseph
+    - Samuel
+    - Henry
+    - Owen
+    - Sebastian
+    - Gabriel
+    - Carter
+    - Jayden
+    - John
+    - Luke
+    - Anthony
+    - Isaac
+    - Dylan
+    - Wyatt
+    - Andrew
+    - Joshua
+    - Christopher
+    - Grayson
+    - Jack
+    - Julian
+    - Ryan
+    - Jaxon
+    - Levi
+    - Nathan

@@ -11,7 +11,7 @@ def test_render_story():
     storage = storages.FileStorage(DATA)
     result = story.render_story(storage, "characters", seed="testing")
     expected = (
-        "Our hero, Noah, is a flashing-eyed, erring explorer, "
+        "Our hero, Owenry, is a flashing-eyed, erring explorer, "
         "subjected to adverse conditions. He carries a whip."
     )
     assert result == expected
