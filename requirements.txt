@@ -1,5 +1,5 @@
-msgpack
-pyyaml
-jinja2
-funcy
-click
+msgpack==1.0.3
+pyyaml==6.0
+jinja2==3.1.2
+funcy==1.17
+click==8.1.3
