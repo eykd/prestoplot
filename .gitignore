@@ -9,7 +9,6 @@ __pycache__
 .coverage
 .testmondata
 dist/
-ChangeLog
 AUTHORS
 venv/
 .tox/
