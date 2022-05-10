@@ -24,7 +24,12 @@ jobs:
           python -m pip install -r requirements-test.txt
 
       - name: Run tests
-        run: pytest
+        run: |
+          pytest
+
+      - name: Generate LCOV report
+        run: |
+          coverage lcov
 
   finish:
     needs: test
