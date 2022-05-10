@@ -5,9 +5,9 @@ PrestoPlot
     :target: https://pypi.org/project/prestoplot/
     :alt: PyPI version
 
-.. image:: https://travis-ci.org/eykd/prestoplot.svg?branch=master
-    :target: https://travis-ci.org/eykd/prestoplot
-    :alt: Build status
+.. image:: https://github.com/eykd/prestoplot/workflows/Tests/badge.svg
+   :target: https://github.com/eykd/prestoplot/actions?query=workflow%3ATests
+   :alt: GitHub Actions - CI
 
 .. image:: https://coveralls.io/repos/github/eykd/prestoplot/badge.svg?branch=master
     :target: https://coveralls.io/github/eykd/prestoplot?branch=master
