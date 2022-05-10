@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+0.5
+---
+
+* Allow instances of ``random.Random()`` as seeds.
+* Rename ``ChangeLog`` to ``CHANGELOG.rst``, include in ``long_description``.
+* Changelog is now manually written, instead of derived from git logs.
+
 0.4
 ---
 
@@ -75,7 +82,7 @@ CHANGES
 0.1.1
 -----
 
-* Add \`--seed\` option to CLI for pre-seeding oracles
+* Add ``--seed`` option to CLI for pre-seeding oracles
 * Add install/usage documentation to README
 * Add documentation to CLI
 
