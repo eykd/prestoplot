@@ -1,9 +1,11 @@
 import contextlib
 
+from . import seeds
 
-def get_context(seed):
-    context = {}
-    context["seed"] = seed
+
+def get_context(seed, **kwargs):
+    context = {**kwargs}
+    seeds.set_seed(context, seed)
     return context
 
 
