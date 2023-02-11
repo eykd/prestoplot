@@ -1,5 +1,5 @@
 -r requirements-test.txt
-ipython==8.3.0
+ipython==8.10.0
 pdbpp==0.10.3
 pre-commit==2.19.0
 twine==4.0.0
