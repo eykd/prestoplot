@@ -27,7 +27,17 @@ def main(debug, pdb):
 
 
 @main.command()
-@click.argument("path")
+@click.argument(
+    "path",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True,
+        path_type=pathlib.Path,
+    ),
+)
 @click.option(
     "--count", default=1, help="How many times to consult the oracle. Default 1."
 )
@@ -73,7 +83,6 @@ def run(path, count, markov_start, markov_chainlen, wrap, wrap_length, seed=None
     if seed is not None:
         kwargs["seed"] = seed
 
-    path = pathlib.Path(path)
     storage = storages.FileStorage(path.parent)
 
     for n in range(count):
@@ -89,3 +98,62 @@ def run(path, count, markov_start, markov_chainlen, wrap, wrap_length, seed=None
                     print(line)
         if n + 1 != count:
             print("\n---\n")
+
+
+@main.command()
+@click.argument(
+    "path",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True,
+        path_type=pathlib.Path,
+    ),
+)
+@click.option(
+    "--markov-start",
+    default="",
+    help="Characters to start any Markov chains with, e.g. 'Ba'. Default ''.",
+)
+@click.option(
+    "--markov-chainlen", default=2, help="Length of Markov chain links. Default 2."
+)
+@click.option("--port", default=5555, help="Port to listen at for HTTP requests.")
+def http(path: pathlib.Path, markov_start: int, markov_chainlen: int, port: int):
+    """Parse a YAML generative grammar oracle file and serve a generator at the given port.
+
+    The "oracle" consulted directly must include a `Begin:` stanza.
+
+    Example:
+
+    \b
+    $ cat names.yaml
+    Begin:
+      - "{Name}"
+    \b
+    Name:
+      - George
+      - Martha
+    \b
+    $ presto run names.yaml
+    George
+
+    """
+    if markov_start and len(markov_start) < markov_chainlen:
+        raise click.UsageError(
+            f"--markov-start must be at least as long as "
+            f"--markov-chainlen, currently {markov_chainlen}."
+        )
+
+    from http.server import HTTPServer
+
+    from . import http
+
+    logging.basicConfig()
+    http_server = HTTPServer(
+        ("", port), http.create_handler(path, markov_start, markov_chainlen)
+    )
+    click.echo(f"Serving on http://localhost:{port}")
+    http_server.serve_forever()
