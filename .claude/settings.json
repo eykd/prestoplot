@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv run ruff:*)",
+      "Bash(git add:*)",
+      "Bash(uv run:*)"
+    ],
+    "deny": []
+  }
+}
