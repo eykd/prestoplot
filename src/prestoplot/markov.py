@@ -1,11 +1,15 @@
 """Markov chain text generation for names and words."""
 
+from __future__ import annotations
+
 import collections
 import random
-from collections.abc import Iterator
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from . import seeds
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class MarkovChainDict(collections.abc.Mapping):
@@ -59,7 +63,7 @@ class MarkovChainDict(collections.abc.Mapping):
         """
         self._dict[prefix].append(suffix)
 
-    def get_suffix(self, prefix: str, rng: Any = random) -> str:
+    def get_suffix(self, prefix: str, rng: Any = random) -> str:  # noqa: ANN401
         """Get random suffix for a prefix.
 
         Args:
@@ -82,15 +86,12 @@ class NameGenerator(collections.abc.Iterator):
     http://www.pick.ucam.org/~ptc24/mchain.html
     """
 
-    def __init__(
-        self, source_names: list[str], chainlen: int = 2, seed: str | None = None
-    ) -> None:
+    def __init__(self, source_names: list[str], chainlen: int = 2) -> None:
         """Initialize name generator with source data.
 
         Args:
             source_names: List of source names to build chain from
             chainlen: Length of prefix chains (1-10)
-            seed: Random seed (unused, kept for compatibility)
 
         Raises:
             ValueError: If chainlen is not between 1 and 10
@@ -100,7 +101,7 @@ class NameGenerator(collections.abc.Iterator):
             raise ValueError('Chain length must be between 1 and 10, inclusive')
         self.chainlen = chainlen
         self.markov = MarkovChainDict()
-        self.read_data(source_names, chainlen)
+        self.read_data(source_names)
 
     def __next__(self) -> str:
         """Generate next random name (iterator protocol).
@@ -111,18 +112,18 @@ class NameGenerator(collections.abc.Iterator):
         """
         return self.get_random_name()
 
-    def read_data(self, names: list[str], destroy: bool = False) -> None:
+    def clear(self) -> None:
+        """Clear the Markov chain."""
+        del self.markov
+        self.markov = MarkovChainDict()
+
+    def read_data(self, names: list[str]) -> None:
         """Build Markov chain from source names.
 
         Args:
             names: List of names to process
-            destroy: Whether to clear existing chain data first
 
         """
-        if destroy:
-            del self.markov
-            self.markov = MarkovChainDict()
-
         oldnames = []
         chainlen = self.chainlen
 
@@ -160,6 +161,6 @@ class NameGenerator(collections.abc.Iterator):
                 continue
             if suffix == '\n' or len(name) == max_length:
                 break
-            name = ''.join((name, suffix))
-            prefix = ''.join((prefix[1:], suffix))
+            name = f'{name}{suffix}'
+            prefix = f'{prefix[1:]}{suffix}'
         return name

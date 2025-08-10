@@ -59,5 +59,5 @@ def test_file_storage_resolve_module_should_not_resolve_invalid_names(
     | storages.CachedFileStorage
     | storages.CompilingFileStorage,
 ) -> None:
-    with pytest.raises(storages.ModuleNotFoundError):
+    with pytest.raises(storages.GrammarModuleNotFoundError):
         fs.resolve_module('foo')

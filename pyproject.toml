@@ -186,6 +186,10 @@ unfixable = []
     "ARG001",
 ]
 
+"src/prestoplot/cli.py" = [
+    "T100",
+]
+
 
 [tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"

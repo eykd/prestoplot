@@ -1,14 +1,16 @@
 """Storage backends for grammar files."""
 
+from __future__ import annotations
+
 import pathlib
 from copy import deepcopy
-from typing import Any
+from typing import Any, ClassVar
 
 import msgpack
 import yaml
 
 
-class ModuleNotFoundError(Exception):
+class GrammarModuleNotFoundError(Exception):
     """Raised when a requested grammar module cannot be found."""
 
 
@@ -43,14 +45,14 @@ class FileStorage:
             Parsed YAML data as Python dict
 
         Raises:
-            ModuleNotFoundError: If the module file doesn't exist
+            GrammarModuleNotFoundError: If the module file doesn't exist
 
         """
         try:
-            with open(self.path / f'{name}.yaml') as fi:
+            with pathlib.Path.open(self.path / f'{name}.yaml') as fi:
                 return yaml.safe_load(fi)
         except FileNotFoundError:
-            raise ModuleNotFoundError(name) from None
+            raise GrammarModuleNotFoundError(name) from None
 
 
 class CompilingFileStorage(FileStorage):
@@ -82,11 +84,11 @@ class CompilingFileStorage(FileStorage):
         """
         compiled_fn = self.path / f'{name}.mp'
         try:
-            with open(compiled_fn, 'rb') as fi:
+            with pathlib.Path.open(compiled_fn, 'rb') as fi:
                 return msgpack.load(fi, raw=False)
         except (FileNotFoundError, TypeError, ValueError, msgpack.ExtraData):
             mod = super().resolve_module(name)
-            with open(compiled_fn, 'wb') as fo:
+            with pathlib.Path.open(compiled_fn, 'wb') as fo:
                 msgpack.dump(mod, fo)
             return mod
 
@@ -97,7 +99,7 @@ class CachedFileStorage(FileStorage):
     Caches parsed modules in memory to avoid repeated file I/O.
     """
 
-    _modules: dict[str, dict[str, Any]] = {}
+    _modules: ClassVar[dict[str, dict[str, Any]]] = {}
 
     def resolve_module(self, name: str) -> dict[str, Any]:
         """Load module from memory cache or file.
@@ -124,7 +126,7 @@ class CompilingCachedFileStorage(CompilingFileStorage):
     maximum performance.
     """
 
-    _modules: dict[str, bytes] = {}
+    _modules: ClassVar[dict[str, bytes]] = {}
 
     def resolve_module(self, name: str) -> dict[str, Any]:
         """Load module from memory cache, compiled cache, or source file.

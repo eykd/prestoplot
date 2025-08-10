@@ -1,18 +1,24 @@
 """Text rendering and template processing."""
 
+from __future__ import annotations
+
 import logging
-from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import jinja2
 from funcy import cached_property, identity, isa
 
-jinja2_env = jinja2.Environment(undefined=jinja2.DebugUndefined)
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+jinja2_env = jinja2.Environment(undefined=jinja2.DebugUndefined)  # noqa: S701
+
+logger = logging.getLogger(__name__)
 
 
 def render_ftemplate(
     tmpl: str, grammar_path: str, context: dict[str, Any]
-) -> 'RenderedStr':
+) -> RenderedStr:
     """Render template using Python f-string evaluation.
 
     Args:
@@ -30,17 +36,14 @@ def render_ftemplate(
     global_ctx = {**context}
     local_ctx = {'result': tmpl}
     try:
-        exec("result = eval(f'''f{result!r}''')", global_ctx, local_ctx)
-    except Exception as exc:
-        logging.exception(f'{exc}--Could not render template in {grammar_path}:')
-        logging.exception(f'Template:\n{tmpl}')
+        exec("result = eval(f'''f{result!r}''')", global_ctx, local_ctx)  # noqa: S102
+    except Exception:
+        logger.exception('Could not render template %s: %s', grammar_path, tmpl)
         raise
     return RenderedStr(local_ctx['result'])
 
 
-def render_jinja2(
-    tmpl: str, grammar_path: str, context: dict[str, Any]
-) -> 'RenderedStr':
+def render_jinja2(tmpl: str, grammar_path: str, context: dict[str, Any]) -> RenderedStr:
     """Render template using Jinja2 template engine.
 
     Args:
@@ -58,20 +61,18 @@ def render_jinja2(
     try:
         return RenderedStr(jinja2_env.from_string(tmpl).render(context))
     except jinja2.TemplateError as exc:
-        logging.exception(f'{exc}--Could not render Jinja2 template in {grammar_path}:')
-        logging.exception(f'Template:\n{tmpl}')
+        logger.exception('Could not render Jinja2 template: %s, %s', grammar_path, tmpl)
         msg = f'Could not render Jinja2 template ({exc}): '
         if hasattr(exc, 'source') and exc.source:
             lineno = exc.lineno
             line = exc.source.splitlines()[lineno - 1]
-            logging.exception(f'{grammar_path}, line {lineno}')
-            logging.exception(f'--> {line}')
+            logger.exception('Line %s: %s', lineno, line)
             msg += f'\n{grammar_path}, line {lineno}'
             msg += f'\n--> {line}'
         else:
             msg += f'\n{grammar_path}'
             msg += f'\n{tmpl}'
-        raise ValueError(msg)
+        raise ValueError(msg) from exc
 
 
 class Text:
@@ -81,11 +82,11 @@ class Text:
     to the underlying value.
     """
 
-    vowels = set('aeiou')
+    vowels: ClassVar[set[str]] = set('aeiou')
 
     def __init__(
         self,
-        value: Any,
+        value: Any,  # noqa: ANN401
         grammar_path: str,
         context: dict[str, Any],
         transformer: Callable[[Any], Any] = identity,
@@ -119,7 +120,7 @@ class Text:
     a = an
 
     @cached_property
-    def An(self) -> str:
+    def An(self) -> str:  # noqa: N802
         """Get capitalized indefinite article ('A' or 'An').
 
         Returns:
@@ -148,7 +149,7 @@ class Text:
         """
         return repr(self.value)
 
-    def __getattr__(self, attr: str) -> Any:
+    def __getattr__(self, attr: str) -> Any:  # noqa: ANN401
         """Delegate string methods to underlying value.
 
         Args:
@@ -183,7 +184,7 @@ class Text:
         """
         return str(self) == other
 
-    def render(self, context: dict[str, Any] | None = None) -> 'RenderedStr':
+    def render(self, context: dict[str, Any] | None = None) -> RenderedStr:  # noqa: ARG002
         """Render text by applying transformer.
 
         Args:
@@ -204,12 +205,12 @@ class RenderableText(Text):
 
     def __init__(
         self,
-        value: Any,
+        value: Any,  # noqa: ANN401
         grammar_path: str,
         context: dict[str, Any],
         transformer: Callable[[Any], Any] = identity,
         render_strategy: Callable[
-            [str, str, dict[str, Any]], 'RenderedStr'
+            [str, str, dict[str, Any]], RenderedStr
         ] = render_ftemplate,
     ) -> None:
         """Initialize renderable text.
@@ -234,7 +235,7 @@ class RenderableText(Text):
         """
         return self.render(self.context)
 
-    def render(self, context: dict[str, Any] | None = None) -> 'RenderedStr':
+    def render(self, context: dict[str, Any] | None = None) -> RenderedStr:
         """Render text using configured template strategy.
 
         Args:
@@ -253,13 +254,13 @@ is_text = isa(Text)
 """Function to check if an object is a Text instance."""
 
 
-class RenderedStr(str):
+class RenderedStr(str):  # noqa: SLOT000
     """String subclass with article generation methods.
 
     Extends str with 'a'/'an' article properties for grammatical correctness.
     """
 
-    vowels = set('aeiou')
+    vowels: ClassVar[set[str]] = set('aeiou')
 
     @cached_property
     def an(self) -> str:
@@ -276,7 +277,7 @@ class RenderedStr(str):
     a = an
 
     @cached_property
-    def An(self) -> str:
+    def An(self) -> str:  # noqa: N802
         """Get capitalized indefinite article ('A' or 'An').
 
         Returns:

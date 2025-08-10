@@ -1,5 +1,7 @@
 """Command-line interface for PrestoPlot."""
 
+from __future__ import annotations
+
 import atexit
 import logging
 import pathlib
@@ -14,7 +16,7 @@ from . import storages, story
 @click.group()
 @click.option('--debug', is_flag=True)
 @click.option('--pdb', is_flag=True)
-def main(debug: bool, pdb: bool) -> None:
+def main(debug: bool, pdb: bool) -> None:  # noqa: FBT001
     """Main CLI group for PrestoPlot commands.
 
     Args:
@@ -29,10 +31,8 @@ def main(debug: bool, pdb: bool) -> None:
         def debug_on_exit() -> None:
             """Enter debugger on exit if an exception occurred."""
             if hasattr(sys, 'last_traceback'):
-                try:
-                    import ipdb as pdb
-                except ImportError:
-                    import pdb
+                import pdb
+
                 pdb.pm()
 
 
@@ -69,11 +69,11 @@ def run(
     count: int,
     markov_start: str,
     markov_chainlen: int,
-    wrap: bool,
+    wrap: bool,  # noqa: FBT001
     wrap_length: int,
     seed: str | None = None,
 ) -> None:
-    """Parse and consult a YAML generative grammar oracle file.
+    r"""Parse and consult a YAML generative grammar oracle file.
 
     The "oracle" consulted directly must include a `Begin:` stanza.
 
@@ -92,11 +92,12 @@ def run(
 
     """
     if markov_start and len(markov_start) < markov_chainlen:
-        raise click.UsageError(
+        msg = (
             f'--markov-start must be at least as long as '
             f'--markov-chainlen, currently {markov_chainlen}.'
         )
-    kwargs = dict(start_markov=markov_start, markov_chainlen=markov_chainlen)
+        raise click.UsageError(msg)
+    kwargs = {'start_markov': markov_start, 'markov_chainlen': markov_chainlen}
     if seed is not None:
         kwargs['seed'] = seed
 
@@ -105,16 +106,16 @@ def run(
     for n in range(count):
         result = story.render_story(storage, path.stem, **kwargs)
         if not wrap:
-            print(result)
+            click.echo(result)
         else:
             for line in result.splitlines():
                 if line.strip():
                     for new_line in textwrap.wrap(line, wrap_length):
-                        print(new_line)
+                        click.echo(new_line)
                 else:
-                    print(line)
+                    click.echo(line)
         if n + 1 != count:
-            print('\n---\n')
+            click.echo('\n---\n')
 
 
 @main.command()
@@ -141,7 +142,7 @@ def run(
 def http(
     path: pathlib.Path, markov_start: str, markov_chainlen: int, port: int
 ) -> None:
-    """Parse a YAML generative grammar oracle file and serve it at the given port.
+    r"""Parse a YAML generative grammar oracle file and serve it at the given port.
 
     The "oracle" consulted directly must include a `Begin:` stanza.
 
@@ -160,10 +161,11 @@ def http(
 
     """
     if markov_start and len(markov_start) < markov_chainlen:
-        raise click.UsageError(
-            f'--markov-start must be at least as long as '
+        msg = (
+            '--markov-start must be at least as long as '
             f'--markov-chainlen, currently {markov_chainlen}.'
         )
+        raise click.UsageError(msg)
 
     from http.server import HTTPServer
 

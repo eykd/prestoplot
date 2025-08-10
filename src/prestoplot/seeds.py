@@ -1,11 +1,13 @@
 """Random seed generation and management for reproducible results."""
 
+from __future__ import annotations
+
 import hashlib
 import random
 from typing import Any
 
 
-def make_seed(rng: Any = random) -> str:
+def make_seed(rng: Any = random) -> str:  # noqa: ANN401
     """Generate a random seed string using MD5 hash.
 
     Args:
@@ -15,7 +17,7 @@ def make_seed(rng: Any = random) -> str:
         32-character hexadecimal seed string
 
     """
-    return hashlib.md5(str(rng.random()).encode('utf-8')).hexdigest()
+    return hashlib.md5(str(rng.random()).encode('utf-8')).hexdigest()  # noqa: S324
 
 
 def set_seed(context: dict[str, Any], seed: str | random.Random | None) -> None:
@@ -62,7 +64,7 @@ def get_seed(context: dict[str, Any]) -> str:
     return seed
 
 
-def get_rng(seed: str | random.Random | None = None) -> Any:
+def get_rng(seed: str | random.Random | None = None) -> random.Random:
     """Get a random number generator for the given seed.
 
     Args:
@@ -76,4 +78,4 @@ def get_rng(seed: str | random.Random | None = None) -> Any:
         return random
     if isinstance(seed, random.Random):
         return seed
-    return random.Random(seed)
+    return random.Random(seed)  # noqa: S311

@@ -12,8 +12,11 @@ is_bool = isa(bool)
 
 
 def parse_grammar_file(
-    storage: Any, grammar_path: str, context: Any, included: set[str] | None = None
-) -> Any:
+    storage: Any,  # noqa: ANN401
+    grammar_path: str,
+    context: Any,  # noqa: ANN401
+    included: set[str] | None = None,
+) -> Any:  # noqa: ANN401
     """Parse a grammar file and its includes into the context.
 
     Args:
@@ -65,16 +68,16 @@ def parse_render_strategy(
         return texts.render_ftemplate
     if render_mode == 'jinja2' or render_mode == 'jinja':
         return texts.render_jinja2
-    raise ValueError(f'Unrecognized render strategy `{render_mode}` in {grammar_path}')
+    raise ValueError('Unrecognized render strategy', render_mode, grammar_path)
 
 
 def parse_includes(
-    storage: Any,
-    grammar_path: str,
+    storage: Any,  # noqa: ANN401
+    grammar_path: str,  # noqa: ARG001
     includes: list[str],
-    context: Any,
+    context: Any,  # noqa: ANN401
     included: set[str],
-) -> Any:
+) -> Any:  # noqa: ANN401
     """Process include directives to load additional grammar files.
 
     Args:
@@ -96,9 +99,9 @@ def parse_includes(
 def parse_data(
     data: dict[str, Any],
     grammar_path: str,
-    context: Any,
+    context: Any,  # noqa: ANN401
     render_strategy: Callable[[str, str, Any], Any] = texts.render_ftemplate,
-) -> Any:
+) -> Any:  # noqa: ANN401
     """Parse grammar data into context objects.
 
     Args:
@@ -119,7 +122,7 @@ def parse_data(
     return context
 
 
-def get_list_setting(value: list[Any], grammar_path: str) -> tuple[str, list[Any]]:
+def get_list_setting(value: list[Any], grammar_path: str) -> tuple[str, list[Any]]:  # noqa: ARG001
     """Extract mode setting from list configuration.
 
     Args:
@@ -131,18 +134,17 @@ def get_list_setting(value: list[Any], grammar_path: str) -> tuple[str, list[Any
 
     """
     mode = 'reuse'
-    if value and is_mapping(value[0]):
-        if len(value[0]) == 1 and 'mode' in value[0]:
-            mode = value.pop(0)['mode']
+    if value and is_mapping(value[0]) and len(value[0]) == 1 and 'mode' in value[0]:
+        mode = value.pop(0)['mode']
     return mode, value
 
 
 def parse_value(
-    value: list[Any] | dict[str, Any] | bool | str,
+    value: list[Any] | dict[str, Any] | bool | str,  # noqa: FBT001
     grammar_path: str,
-    context: Any,
+    context: Any,  # noqa: ANN401
     render_strategy: Callable[[str, str, Any], Any] = texts.render_ftemplate,
-) -> Any:
+) -> Any:  # noqa: ANN401
     """Parse a grammar value into appropriate database/text objects.
 
     Args:
@@ -210,6 +212,7 @@ def parse_value(
         return texts.RenderableText(
             fix_text(value), grammar_path, context, render_strategy=render_strategy
         )
+    return None
 
 
 def fix_text(text: str) -> str:

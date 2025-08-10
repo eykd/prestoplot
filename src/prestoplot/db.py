@@ -1,12 +1,19 @@
 """Database objects for grammar value storage and access."""
 
+from __future__ import annotations
+
 import logging
 import math
-from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from . import contexts, markov, seeds
 from .texts import is_text
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from random import Random
+
+logger = logging.getLogger(__name__)
 
 
 class Database:
@@ -35,7 +42,7 @@ class Database:
         self.grammar_path = grammar_path
         self.cache = {}
 
-    def __getattr__(self, attr: str) -> Any:
+    def __getattr__(self, attr: str) -> Any:  # noqa: ANN401
         """Get attribute value with lazy evaluation and caching.
 
         Creates a new seeded context for each unique attribute name
@@ -61,7 +68,7 @@ class Database:
             self.cache[attr] = result
         return self.cache[attr]
 
-    def __getitem__(self, key: str) -> Any:
+    def __getitem__(self, key: str) -> Any:  # noqa: ANN401
         """Get item by key (delegates to __getattr__).
 
         Args:
@@ -77,7 +84,7 @@ class Database:
         try:
             return getattr(self, key)
         except TypeError:
-            logging.exception(f'No key {key!r} in {self!r}')
+            logger.exception('No key %r in %s', key, self)
             raise
 
     def __str__(self) -> str:
@@ -96,8 +103,12 @@ class Databag(dict):
     Extends dict to provide context-aware rendering of text values.
     """
 
-    def __init__(
-        self, grammar_path: str, context: dict[str, Any], *args: Any, **kwargs: Any
+    def __init__(  # noqa: D417
+        self,
+        grammar_path: str,
+        context: dict[str, Any],
+        *args: tuple[Any, ...],
+        **kwargs: dict[str, Any],
     ) -> None:
         """Initialize databag with context.
 
@@ -111,7 +122,7 @@ class Databag(dict):
         self.grammar_path = grammar_path
         super().__init__(*args, **kwargs)
 
-    def __getattr__(self, attr: str) -> Any:
+    def __getattr__(self, attr: str) -> Any:  # noqa: ANN401
         """Get attribute as dictionary key.
 
         Args:
@@ -123,7 +134,7 @@ class Databag(dict):
         """
         return self[attr]
 
-    def __getitem__(self, key: str) -> Any:
+    def __getitem__(self, key: str) -> Any:  # noqa: ANN401
         """Get item with context-aware text rendering.
 
         Args:
@@ -139,7 +150,7 @@ class Databag(dict):
         try:
             value = super().__getitem__(str(key))
         except KeyError:
-            logging.exception(f'No key {key!r} in {", ".join(self.keys())}')
+            logger.exception('No key %r in %s', key, ', '.join(self.keys()))
             raise
         if is_text(value):
             value = value.render(self.context)
@@ -153,8 +164,12 @@ class Datalist(list):
     Extends list to provide context-aware rendering of text values.
     """
 
-    def __init__(
-        self, grammar_path: str, context: dict[str, Any], *args: Any, **kwargs: Any
+    def __init__(  # noqa: D417
+        self,
+        grammar_path: str,
+        context: dict[str, Any],
+        *args: tuple[Any, ...],
+        **kwargs: dict[str, Any],
     ) -> None:
         """Initialize datalist with context.
 
@@ -168,7 +183,7 @@ class Datalist(list):
         self.grammar_path = grammar_path
         super().__init__(*args, **kwargs)
 
-    def __getitem__(self, idx: int) -> Any:
+    def __getitem__(self, idx: int) -> Any:  # noqa: ANN401
         """Get item with context-aware text rendering.
 
         Args:
@@ -184,7 +199,7 @@ class Datalist(list):
         try:
             value = super().__getitem__(idx)
         except KeyError:
-            logging.exception(f'No index {idx!r} in {", ".join(self)}')
+            logger.exception('No index %r in %s', idx, ', '.join(self))
             raise
         if is_text(value):
             value = value.render(self.context)
@@ -203,7 +218,7 @@ def choose(items: list[Any]) -> Callable[[dict[str, Any]], Any]:
 
     """
 
-    def chooser(context: dict[str, Any]) -> Any:
+    def chooser(context: dict[str, Any]) -> Any:  # noqa: ANN401
         """Choose random item from list.
 
         Args:
@@ -233,7 +248,7 @@ def pick(items: list[Any]) -> Callable[[dict[str, Any]], Any]:
 
     """
 
-    def picker(context: dict[str, Any]) -> Any:
+    def picker(context: dict[str, Any]) -> Any:  # noqa: ANN401
         """Pick and remove random item from list.
 
         Args:
@@ -244,10 +259,7 @@ def pick(items: list[Any]) -> Callable[[dict[str, Any]], Any]:
 
         """
         rng = seeds.get_rng(context['seed'])
-        if len(items) > 1:
-            idx = rng.randint(0, len(items) - 1)
-        else:
-            idx = 0
+        idx = rng.randint(0, len(items) - 1) if len(items) > 1 else 0
         result = items.pop(idx)
         if is_text(result):
             result = result.render(context)
@@ -301,7 +313,7 @@ def ratchet(items: list[Any]) -> Callable[[dict[str, Any]], Any]:
     """
     state = {'index': 0}
 
-    def ratcheter(context: dict[str, Any]) -> Any:
+    def ratcheter(context: dict[str, Any]) -> Any:  # noqa: ANN401
         """Return next item in sequence, cycling back to start when needed.
 
         Args:
@@ -324,7 +336,7 @@ def ratchet(items: list[Any]) -> Callable[[dict[str, Any]], Any]:
     return ratcheter
 
 
-def pareto_int(rng: Any, shape: float = 1) -> int:
+def pareto_int(rng: Random, shape: float = 1) -> int:
     """Generate integer from Pareto distribution.
 
     Args:

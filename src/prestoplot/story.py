@@ -1,17 +1,21 @@
 """Story rendering from grammar files."""
 
+from __future__ import annotations
+
 import logging
 from typing import Any
 
 from . import contexts, grammars
 
+logger = logging.getLogger(__name__)
+
 
 def render_story(
-    storage: Any,
+    storage: Any,  # noqa: ANN401
     name: str,
     start: str = 'Begin',
     seed: str | None = None,
-    **kwargs: Any,
+    **kwargs: dict[str, Any],
 ) -> str:
     """Render a complete story from a grammar file.
 
@@ -26,7 +30,7 @@ def render_story(
         Generated story text as string
 
     """
-    logging.debug(f'Rendering {name} w/ {storage}')
+    logger.debug('Rendering %s w/ %s', name, storage)
 
     ctx = contexts.get_context(seed, **kwargs)
     ctx = grammars.parse_grammar_file(storage, name, ctx)
