@@ -2,6 +2,7 @@
 
 import pathlib
 from copy import deepcopy
+from typing import Any
 
 import msgpack
 import yaml
@@ -14,7 +15,7 @@ class ModuleNotFoundError(Exception):
 class FileStorage:
     """Simple file-based storage for YAML grammar files."""
 
-    def __init__(self, path):
+    def __init__(self, path: str | pathlib.Path) -> None:
         """Initialize storage with a base path.
 
         Args:
@@ -23,7 +24,7 @@ class FileStorage:
         """
         self.path = pathlib.Path(path)
 
-    def list_modules(self):
+    def list_modules(self) -> list[str]:
         """List available grammar modules by filename stem.
 
         Returns:
@@ -32,7 +33,7 @@ class FileStorage:
         """
         return sorted(fn.stem for fn in self.path.glob('*.yaml'))
 
-    def resolve_module(self, name):
+    def resolve_module(self, name: str) -> dict[str, Any]:
         """Load and parse a grammar module from YAML file.
 
         Args:
@@ -58,18 +59,18 @@ class CompilingFileStorage(FileStorage):
     Compiles YAML files to MessagePack (.mp) format for faster loading.
     """
 
-    def clean(self):
+    def clean(self) -> None:
         """Remove all compiled MessagePack files."""
         for fn in self.path.glob('*.mp'):
             fn.remove()
 
-    def recompile_modules(self):
+    def recompile_modules(self) -> None:
         """Recompile all YAML modules to MessagePack format."""
         self.clean()
         for fn in self.path.glob('*.yaml'):
             self.resolve_module(fn.stem)
 
-    def resolve_module(self, name):
+    def resolve_module(self, name: str) -> dict[str, Any]:
         """Load module from compiled cache or compile from YAML.
 
         Args:
@@ -96,9 +97,9 @@ class CachedFileStorage(FileStorage):
     Caches parsed modules in memory to avoid repeated file I/O.
     """
 
-    _modules = {}
+    _modules: dict[str, dict[str, Any]] = {}
 
-    def resolve_module(self, name):
+    def resolve_module(self, name: str) -> dict[str, Any]:
         """Load module from memory cache or file.
 
         Args:
@@ -123,9 +124,9 @@ class CompilingCachedFileStorage(CompilingFileStorage):
     maximum performance.
     """
 
-    _modules = {}
+    _modules: dict[str, bytes] = {}
 
-    def resolve_module(self, name):
+    def resolve_module(self, name: str) -> dict[str, Any]:
         """Load module from memory cache, compiled cache, or source file.
 
         Args:

@@ -14,7 +14,7 @@ from . import storages, story
 @click.group()
 @click.option('--debug', is_flag=True)
 @click.option('--pdb', is_flag=True)
-def main(debug, pdb):
+def main(debug: bool, pdb: bool) -> None:
     """Main CLI group for PrestoPlot commands.
 
     Args:
@@ -26,7 +26,7 @@ def main(debug, pdb):
     if pdb:
 
         @atexit.register
-        def debug_on_exit():
+        def debug_on_exit() -> None:
             """Enter debugger on exit if an exception occurred."""
             if hasattr(sys, 'last_traceback'):
                 try:
@@ -64,7 +64,15 @@ def main(debug, pdb):
     '--wrap-length', default=78, help='Maximum line length when wrapping text.'
 )
 @click.option('--seed', help='Pre-seed the random generator.')
-def run(path, count, markov_start, markov_chainlen, wrap, wrap_length, seed=None):
+def run(
+    path: pathlib.Path,
+    count: int,
+    markov_start: str,
+    markov_chainlen: int,
+    wrap: bool,
+    wrap_length: int,
+    seed: str | None = None,
+) -> None:
     """Parse and consult a YAML generative grammar oracle file.
 
     The "oracle" consulted directly must include a `Begin:` stanza.
@@ -130,7 +138,9 @@ def run(path, count, markov_start, markov_chainlen, wrap, wrap_length, seed=None
     '--markov-chainlen', default=2, help='Length of Markov chain links. Default 2.'
 )
 @click.option('--port', default=5555, help='Port to listen at for HTTP requests.')
-def http(path: pathlib.Path, markov_start: int, markov_chainlen: int, port: int):
+def http(
+    path: pathlib.Path, markov_start: str, markov_chainlen: int, port: int
+) -> None:
     """Parse a YAML generative grammar oracle file and serve it at the given port.
 
     The "oracle" consulted directly must include a `Begin:` stanza.

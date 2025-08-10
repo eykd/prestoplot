@@ -10,7 +10,7 @@ import markdown
 from . import storages, story
 
 
-def create_handler(oracle_path: Path, markov_start: int, markov_chainlen: int):
+def create_handler(oracle_path: Path, markov_start: str, markov_chainlen: int) -> type:
     """Create HTTP request handler for serving grammar content.
 
     Args:
@@ -28,7 +28,7 @@ def create_handler(oracle_path: Path, markov_start: int, markov_chainlen: int):
 
         oracle_storage = storages.FileStorage(oracle_path.parent)
 
-        def do_GET(self):
+        def do_GET(self) -> None:
             """Handle GET requests by generating and serving grammar content.
 
             Generates content from the configured oracle and serves it as

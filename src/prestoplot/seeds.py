@@ -2,9 +2,10 @@
 
 import hashlib
 import random
+from typing import Any
 
 
-def make_seed(rng=random):
+def make_seed(rng: Any = random) -> str:
     """Generate a random seed string using MD5 hash.
 
     Args:
@@ -17,7 +18,7 @@ def make_seed(rng=random):
     return hashlib.md5(str(rng.random()).encode('utf-8')).hexdigest()
 
 
-def set_seed(context, seed):
+def set_seed(context: dict[str, Any], seed: str | random.Random | None) -> None:
     """Set the random seed in the context.
 
     Args:
@@ -33,7 +34,7 @@ def set_seed(context, seed):
     context['seed'] = seed
 
 
-def get_seed(context):
+def get_seed(context: dict[str, Any]) -> str:
     """Get the current seed from context, creating one if needed.
 
     Combines the base seed with any key value to create unique
@@ -61,7 +62,7 @@ def get_seed(context):
     return seed
 
 
-def get_rng(seed=None):
+def get_rng(seed: str | random.Random | None = None) -> Any:
     """Get a random number generator for the given seed.
 
     Args:

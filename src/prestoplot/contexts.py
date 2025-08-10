@@ -1,11 +1,13 @@
 """Context management for grammar rendering."""
 
 import contextlib
+from collections.abc import Generator
+from typing import Any
 
 from . import seeds
 
 
-def get_context(seed, **kwargs):
+def get_context(seed: str | None, **kwargs: Any) -> dict[str, Any]:
     """Create a new grammar context with optional seed and parameters.
 
     Args:
@@ -22,7 +24,7 @@ def get_context(seed, **kwargs):
 
 
 @contextlib.contextmanager
-def update_context(ctx, **kwargs):
+def update_context(ctx: dict[str, Any], **kwargs: Any) -> Generator[dict[str, Any]]:
     """Temporarily update context with new values.
 
     Args:

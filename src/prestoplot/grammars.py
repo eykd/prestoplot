@@ -1,6 +1,8 @@
 """Grammar file parsing and processing."""
 
 import textwrap
+from collections.abc import Callable
+from typing import Any
 
 from funcy import is_list, is_mapping, isa
 
@@ -9,7 +11,9 @@ from . import db, texts
 is_bool = isa(bool)
 
 
-def parse_grammar_file(storage, grammar_path, context, included=None):
+def parse_grammar_file(
+    storage: Any, grammar_path: str, context: Any, included: set[str] | None = None
+) -> Any:
     """Parse a grammar file and its includes into the context.
 
     Args:
@@ -41,7 +45,9 @@ def parse_grammar_file(storage, grammar_path, context, included=None):
     return parse_data(doc, grammar_path, context, render_strategy=render_strategy)
 
 
-def parse_render_strategy(render_mode, grammar_path):
+def parse_render_strategy(
+    render_mode: str, grammar_path: str
+) -> Callable[[str, str, Any], Any]:
     """Parse and return the appropriate template rendering function.
 
     Args:
@@ -62,7 +68,13 @@ def parse_render_strategy(render_mode, grammar_path):
     raise ValueError(f'Unrecognized render strategy `{render_mode}` in {grammar_path}')
 
 
-def parse_includes(storage, grammar_path, includes, context, included):
+def parse_includes(
+    storage: Any,
+    grammar_path: str,
+    includes: list[str],
+    context: Any,
+    included: set[str],
+) -> Any:
     """Process include directives to load additional grammar files.
 
     Args:
@@ -81,7 +93,12 @@ def parse_includes(storage, grammar_path, includes, context, included):
     return context
 
 
-def parse_data(data, grammar_path, context, render_strategy=texts.render_ftemplate):
+def parse_data(
+    data: dict[str, Any],
+    grammar_path: str,
+    context: Any,
+    render_strategy: Callable[[str, str, Any], Any] = texts.render_ftemplate,
+) -> Any:
     """Parse grammar data into context objects.
 
     Args:
@@ -102,7 +119,7 @@ def parse_data(data, grammar_path, context, render_strategy=texts.render_ftempla
     return context
 
 
-def get_list_setting(value, grammar_path):
+def get_list_setting(value: list[Any], grammar_path: str) -> tuple[str, list[Any]]:
     """Extract mode setting from list configuration.
 
     Args:
@@ -120,7 +137,12 @@ def get_list_setting(value, grammar_path):
     return mode, value
 
 
-def parse_value(value, grammar_path, context, render_strategy=texts.render_ftemplate):
+def parse_value(
+    value: list[Any] | dict[str, Any] | bool | str,
+    grammar_path: str,
+    context: Any,
+    render_strategy: Callable[[str, str, Any], Any] = texts.render_ftemplate,
+) -> Any:
     """Parse a grammar value into appropriate database/text objects.
 
     Args:
@@ -190,7 +212,7 @@ def parse_value(value, grammar_path, context, render_strategy=texts.render_ftemp
         )
 
 
-def fix_text(text):
+def fix_text(text: str) -> str:
     """Clean up text by removing common indentation and trailing whitespace.
 
     Args:

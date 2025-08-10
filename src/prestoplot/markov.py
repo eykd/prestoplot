@@ -2,6 +2,8 @@
 
 import collections
 import random
+from collections.abc import Iterator
+from typing import Any
 
 from . import seeds
 
@@ -13,11 +15,11 @@ class MarkovChainDict(collections.abc.Mapping):
     http://www.pick.ucam.org/~ptc24/mchain.html
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize empty Markov chain dictionary."""
         self._dict = collections.defaultdict(list)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> list[str]:
         """Get suffixes for a given prefix key.
 
         Args:
@@ -29,7 +31,7 @@ class MarkovChainDict(collections.abc.Mapping):
         """
         return self._dict[key]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Get number of prefix keys in the chain.
 
         Returns:
@@ -38,7 +40,7 @@ class MarkovChainDict(collections.abc.Mapping):
         """
         return len(self._dict)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         """Iterate over prefix keys.
 
         Returns:
@@ -47,7 +49,7 @@ class MarkovChainDict(collections.abc.Mapping):
         """
         return iter(self._dict)
 
-    def add_key(self, prefix, suffix):
+    def add_key(self, prefix: str, suffix: str) -> None:
         """Add a prefix-suffix pair to the chain.
 
         Args:
@@ -57,7 +59,7 @@ class MarkovChainDict(collections.abc.Mapping):
         """
         self._dict[prefix].append(suffix)
 
-    def get_suffix(self, prefix, rng=random):
+    def get_suffix(self, prefix: str, rng: Any = random) -> str:
         """Get random suffix for a prefix.
 
         Args:
@@ -80,7 +82,9 @@ class NameGenerator(collections.abc.Iterator):
     http://www.pick.ucam.org/~ptc24/mchain.html
     """
 
-    def __init__(self, source_names, chainlen=2, seed=None):
+    def __init__(
+        self, source_names: list[str], chainlen: int = 2, seed: str | None = None
+    ) -> None:
         """Initialize name generator with source data.
 
         Args:
@@ -98,7 +102,7 @@ class NameGenerator(collections.abc.Iterator):
         self.markov = MarkovChainDict()
         self.read_data(source_names, chainlen)
 
-    def __next__(self):
+    def __next__(self) -> str:
         """Generate next random name (iterator protocol).
 
         Returns:
@@ -107,7 +111,7 @@ class NameGenerator(collections.abc.Iterator):
         """
         return self.get_random_name()
 
-    def read_data(self, names, destroy=False):
+    def read_data(self, names: list[str], destroy: bool = False) -> None:
         """Build Markov chain from source names.
 
         Args:
@@ -132,7 +136,9 @@ class NameGenerator(collections.abc.Iterator):
                 )
             self.markov.add_key(spacer[name_len : name_len + chainlen], '\n')
 
-    def get_random_name(self, start='', max_length=10, seed=None):
+    def get_random_name(
+        self, start: str = '', max_length: int = 10, seed: str | None = None
+    ) -> str:
         """Generate a random name using the Markov chain.
 
         Args:

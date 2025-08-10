@@ -1,11 +1,18 @@
 """Story rendering from grammar files."""
 
 import logging
+from typing import Any
 
 from . import contexts, grammars
 
 
-def render_story(storage, name, start='Begin', seed=None, **kwargs):
+def render_story(
+    storage: Any,
+    name: str,
+    start: str = 'Begin',
+    seed: str | None = None,
+    **kwargs: Any,
+) -> str:
     """Render a complete story from a grammar file.
 
     Args:
