@@ -1,13 +1,14 @@
 """Integration tests for ratchet mode in grammar files."""
 
 import pathlib
+from typing import Final
 
 from prestoplot import storages, story
 
-DATA = pathlib.Path(__file__).parent / 'data'
+DATA: Final[pathlib.Path] = pathlib.Path(__file__).parent / 'data'
 
 
-def test_ratchet_mode_integration():
+def test_ratchet_mode_integration() -> None:
     """Test that ratchet mode works within a single grammar evaluation."""
     storage = storages.FileStorage(str(DATA))
 
@@ -19,7 +20,7 @@ def test_ratchet_mode_integration():
     assert result == expected
 
 
-def test_ratchet_mode_different_keys():
+def test_ratchet_mode_different_keys() -> None:
     """Test that each new story generation creates a fresh ratchet."""
     storage = storages.FileStorage(str(DATA))
 

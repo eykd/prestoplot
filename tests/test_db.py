@@ -1,17 +1,19 @@
 """Tests for the db module factory functions."""
 
+from typing import Any
+
 import pytest
 
 from prestoplot import contexts, db, texts
 
 
 @pytest.fixture
-def context():
+def context() -> dict[str, Any]:
     """Create a test context with seed."""
     return contexts.get_context(seed='test-seed')
 
 
-def test_ratchet_should_return_items_sequentially():
+def test_ratchet_should_return_items_sequentially() -> None:
     """Test that ratchet returns items in order."""
     items = ['first', 'second', 'third']
     ratcheter = db.ratchet(items)
@@ -27,7 +29,7 @@ def test_ratchet_should_return_items_sequentially():
     assert ratcheter(context) == 'second'
 
 
-def test_ratchet_should_handle_empty_list():
+def test_ratchet_should_handle_empty_list() -> None:
     """Test that ratchet handles empty lists gracefully."""
     ratcheter = db.ratchet([])
     context = {'seed': 'test'}
@@ -36,7 +38,7 @@ def test_ratchet_should_handle_empty_list():
     assert ratcheter(context) == ''
 
 
-def test_ratchet_should_handle_single_item():
+def test_ratchet_should_handle_single_item() -> None:
     """Test that ratchet works with single-item lists."""
     ratcheter = db.ratchet(['only'])
     context = {'seed': 'test'}
@@ -46,7 +48,7 @@ def test_ratchet_should_handle_single_item():
     assert ratcheter(context) == 'only'
 
 
-def test_ratchet_should_render_text_objects(context):
+def test_ratchet_should_render_text_objects(context: dict[str, Any]) -> None:
     """Test that ratchet renders text objects properly."""
     text_obj = texts.RenderedStr('rendered')
     items = [text_obj, 'plain']
@@ -62,7 +64,7 @@ def test_ratchet_should_render_text_objects(context):
     assert result2 == 'plain'
 
 
-def test_ratchet_maintains_independent_state():
+def test_ratchet_maintains_independent_state() -> None:
     """Test that multiple ratchet instances maintain separate state."""
     items1 = ['a', 'b', 'c']
     items2 = ['x', 'y']
@@ -84,7 +86,7 @@ def test_ratchet_maintains_independent_state():
     assert ratcheter1(context) == 'a'  # Cycles back
 
 
-def test_choose_should_select_randomly(context):
+def test_choose_should_select_randomly(context: dict[str, Any]) -> None:
     """Test that choose selects items randomly but consistently with same seed."""
     items = ['a', 'b', 'c']
     chooser = db.choose(items)
@@ -98,7 +100,7 @@ def test_choose_should_select_randomly(context):
     assert result2 in items
 
 
-def test_pick_should_remove_items():
+def test_pick_should_remove_items() -> None:
     """Test that pick removes items from the list."""
     items = ['a', 'b', 'c']
     picker = db.pick(items)
@@ -118,7 +120,7 @@ def test_pick_should_remove_items():
     assert len(items) == 0  # All items should be removed
 
 
-def test_pick_should_handle_single_item():
+def test_pick_should_handle_single_item() -> None:
     """Test that pick handles single-item lists."""
     items = ['only']
     picker = db.pick(items)
@@ -129,7 +131,7 @@ def test_pick_should_handle_single_item():
     assert len(items) == 0
 
 
-def test_markovify_should_generate_names(context):
+def test_markovify_should_generate_names(context: dict[str, Any]) -> None:
     """Test that markovify generates names using Markov chains."""
     items = ['Alice', 'Bob', 'Charlie', 'David']
     markovifier = db.markovify(items)
@@ -139,7 +141,7 @@ def test_markovify_should_generate_names(context):
     assert len(result) > 0
 
 
-def test_pareto_int_should_generate_integers():
+def test_pareto_int_should_generate_integers() -> None:
     """Test that pareto_int generates integer values."""
     from prestoplot.seeds import get_rng
 

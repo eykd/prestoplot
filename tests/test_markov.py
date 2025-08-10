@@ -1,6 +1,6 @@
 from prestoplot import markov, seeds
 
-NAMES = [
+NAMES: list[str] = [
     'Noah',
     'Liam',
     'William',
@@ -47,7 +47,7 @@ NAMES = [
 ]
 
 
-def test_it_should_generate_stable_names_from_seed():
+def test_it_should_generate_stable_names_from_seed() -> None:
     gen = markov.NameGenerator(NAMES)
 
     result = gen.get_random_name(seed='foo')
@@ -57,7 +57,7 @@ def test_it_should_generate_stable_names_from_seed():
     assert result == 'Anden'
 
 
-def test_it_should_generate_stable_names_with_seeded_rng():
+def test_it_should_generate_stable_names_with_seeded_rng() -> None:
     gen = markov.NameGenerator(NAMES)
     rng = seeds.get_rng('foo')
 

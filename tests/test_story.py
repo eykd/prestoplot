@@ -1,13 +1,14 @@
 import pathlib
+from typing import Final
 
 from prestoplot import seeds, storages, story
 
-PATH = pathlib.Path(__file__).parent
+PATH: Final[pathlib.Path] = pathlib.Path(__file__).parent
 
-DATA = PATH / 'data'
+DATA: Final[pathlib.Path] = PATH / 'data'
 
 
-def test_it_should_generate_a_stable_story_with_seed():
+def test_it_should_generate_a_stable_story_with_seed() -> None:
     storage = storages.FileStorage(DATA)
     result = story.render_story(storage, 'characters', seed='testing')
     expected = (
@@ -24,7 +25,7 @@ def test_it_should_generate_a_stable_story_with_seed():
     assert result == expected
 
 
-def test_it_should_generate_a_stable_story_with_seeded_rng():
+def test_it_should_generate_a_stable_story_with_seeded_rng() -> None:
     storage = storages.FileStorage(DATA)
     rng = seeds.get_rng('foo')
     result = story.render_story(storage, 'characters', seed=rng)
@@ -42,7 +43,7 @@ def test_it_should_generate_a_stable_story_with_seeded_rng():
     assert result == expected
 
 
-def test_render_story_jinja2():
+def test_render_story_jinja2() -> None:
     storage = storages.FileStorage(DATA)
     result = story.render_story(storage, 'characters_jinja', seed='testing')
     expected = (
