@@ -60,7 +60,6 @@ def run(path, count, markov_start, markov_chainlen, wrap, wrap_length, seed=None
     The "oracle" consulted directly must include a `Begin:` stanza.
 
     Example:
-
     \b
     $ cat names.yaml
     Begin:
@@ -127,7 +126,6 @@ def http(path: pathlib.Path, markov_start: int, markov_chainlen: int, port: int)
     The "oracle" consulted directly must include a `Begin:` stanza.
 
     Example:
-
     \b
     $ cat names.yaml
     Begin:

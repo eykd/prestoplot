@@ -77,9 +77,8 @@ class NameGenerator(collections.abc.Iterator):
             suffix = self.markov.get_suffix(prefix, rng=rng)
             if suffix == '-':
                 continue
-            elif suffix == '\n' or len(name) == max_length:
+            if suffix == '\n' or len(name) == max_length:
                 break
-            else:
-                name = ''.join((name, suffix))
-                prefix = ''.join((prefix[1:], suffix))
+            name = ''.join((name, suffix))
+            prefix = ''.join((prefix[1:], suffix))
         return name

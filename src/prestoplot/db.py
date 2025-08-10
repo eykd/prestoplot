@@ -50,7 +50,7 @@ class Databag(dict):
         try:
             value = super().__getitem__(str(key))
         except KeyError:
-            logging.error(f'No key {key!r} in {", ".join(self.keys())}')
+            logging.exception(f'No key {key!r} in {", ".join(self.keys())}')
             raise
         if is_text(value):
             value = value.render(self.context)
@@ -68,7 +68,7 @@ class Datalist(list):
         try:
             value = super().__getitem__(idx)
         except KeyError:
-            logging.error(f'No index {idx!r} in {", ".join(self)}')
+            logging.exception(f'No index {idx!r} in {", ".join(self)}')
             raise
         if is_text(value):
             value = value.render(self.context)

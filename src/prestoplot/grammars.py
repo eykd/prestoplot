@@ -13,8 +13,7 @@ def parse_grammar_file(storage, grammar_path, context, included=None):
     else:
         if grammar_path in included:
             return context
-        else:
-            included.add(grammar_path)
+        included.add(grammar_path)
 
     doc = storage.resolve_module(grammar_path)
     context = parse_includes(
@@ -31,12 +30,9 @@ def parse_grammar_file(storage, grammar_path, context, included=None):
 def parse_render_strategy(render_mode, grammar_path):
     if render_mode == 'ftemplate':
         return texts.render_ftemplate
-    elif render_mode == 'jinja2' or render_mode == 'jinja':
+    if render_mode == 'jinja2' or render_mode == 'jinja':
         return texts.render_jinja2
-    else:
-        raise ValueError(
-            f'Unrecognized render strategy `{render_mode}` in {grammar_path}'
-        )
+    raise ValueError(f'Unrecognized render strategy `{render_mode}` in {grammar_path}')
 
 
 def parse_includes(storage, grammar_path, includes, context, included):
@@ -76,7 +72,7 @@ def parse_value(value, grammar_path, context, render_strategy=texts.render_ftemp
                 grammar_path,
                 context,
             )
-        elif mode == 'pick':
+        if mode == 'pick':
             return db.Database(
                 db.pick([
                     parse_value(
@@ -87,17 +83,17 @@ def parse_value(value, grammar_path, context, render_strategy=texts.render_ftemp
                 grammar_path,
                 context,
             )
-        elif mode == 'markov':
+        if mode == 'markov':
             return db.Database(
                 db.markovify([texts.RenderedStr(v) for v in value]),
                 grammar_path,
                 context,
             )
-        elif mode == 'ratchet':
+        if mode == 'ratchet':
             return db.Database(
                 db.ratchet([texts.RenderedStr(v) for v in value]), grammar_path, context
             )
-        elif mode == 'list':
+        if mode == 'list':
             return db.Datalist(
                 grammar_path, context, [texts.RenderedStr(v) for v in value]
             )

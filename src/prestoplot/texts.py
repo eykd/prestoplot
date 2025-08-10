@@ -12,8 +12,8 @@ def render_ftemplate(tmpl, grammar_path, context):
     try:
         exec("result = eval(f'''f{result!r}''')", global_ctx, local_ctx)
     except Exception as exc:
-        logging.error(f'{exc}--Could not render template in {grammar_path}:')
-        logging.error(f'Template:\n{tmpl}')
+        logging.exception(f'{exc}--Could not render template in {grammar_path}:')
+        logging.exception(f'Template:\n{tmpl}')
         raise
     return RenderedStr(local_ctx['result'])
 
@@ -22,14 +22,14 @@ def render_jinja2(tmpl, grammar_path, context):
     try:
         return RenderedStr(jinja2_env.from_string(tmpl).render(context))
     except jinja2.TemplateError as exc:
-        logging.error(f'{exc}--Could not render Jinja2 template in {grammar_path}:')
-        logging.error(f'Template:\n{tmpl}')
+        logging.exception(f'{exc}--Could not render Jinja2 template in {grammar_path}:')
+        logging.exception(f'Template:\n{tmpl}')
         msg = f'Could not render Jinja2 template ({exc}): '
         if hasattr(exc, 'source') and exc.source:
             lineno = exc.lineno
             line = exc.source.splitlines()[lineno - 1]
-            logging.error(f'{grammar_path}, line {lineno}')
-            logging.error(f'--> {line}')
+            logging.exception(f'{grammar_path}, line {lineno}')
+            logging.exception(f'--> {line}')
             msg += f'\n{grammar_path}, line {lineno}'
             msg += f'\n--> {line}'
         else:
@@ -51,8 +51,7 @@ class Text:
     def an(self):
         if str(self.value)[0].lower() in self.vowels:
             return 'an'
-        else:
-            return 'a'
+        return 'a'
 
     a = an
 
@@ -71,8 +70,7 @@ class Text:
     def __getattr__(self, attr):
         if hasattr(str, attr):
             return getattr(self.value, attr)
-        else:
-            return super().__getattr__(attr)
+        return super().__getattr__(attr)
 
     def __hash__(self):
         return hash(self.value)
@@ -115,8 +113,7 @@ class RenderedStr(str):
     def an(self):
         if self[0].lower() in self.vowels:
             return 'an'
-        else:
-            return 'a'
+        return 'a'
 
     a = an
 

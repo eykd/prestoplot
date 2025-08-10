@@ -23,7 +23,7 @@ def create_handler(oracle_path: Path, markov_start: int, markov_chainlen: int):
                 logging.exception('Error!')
                 self.send_response(500)
                 self.wfile.write(
-                    f'<h1>Error</h1><pre>{traceback.format_exc()}</pre>'.encode('utf-8')
+                    f'<h1>Error</h1><pre>{traceback.format_exc()}</pre>'.encode()
                 )
 
             else:

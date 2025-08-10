@@ -34,7 +34,6 @@ def get_seed(context):
 def get_rng(seed=None):
     if seed is None:
         return random
-    elif isinstance(seed, random.Random):
+    if isinstance(seed, random.Random):
         return seed
-    else:
-        return random.Random(seed)
+    return random.Random(seed)
