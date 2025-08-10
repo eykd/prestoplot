@@ -1,3 +1,5 @@
+"""PrestoPlot: Generative grammars for idea generation."""
+
 try:
     from . import _version
 

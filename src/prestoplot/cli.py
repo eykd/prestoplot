@@ -1,3 +1,5 @@
+"""Command-line interface for PrestoPlot."""
+
 import atexit
 import logging
 import pathlib
@@ -13,11 +15,19 @@ from . import storages, story
 @click.option('--debug', is_flag=True)
 @click.option('--pdb', is_flag=True)
 def main(debug, pdb):
+    """Main CLI group for PrestoPlot commands.
+
+    Args:
+        debug: Enable debug logging
+        pdb: Enable post-mortem debugging on exceptions
+
+    """
     logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
     if pdb:
 
         @atexit.register
         def debug_on_exit():
+            """Enter debugger on exit if an exception occurred."""
             if hasattr(sys, 'last_traceback'):
                 try:
                     import ipdb as pdb

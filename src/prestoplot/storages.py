@@ -1,3 +1,5 @@
+"""Storage backends for grammar files."""
+
 import pathlib
 from copy import deepcopy
 
@@ -6,35 +8,77 @@ import yaml
 
 
 class ModuleNotFoundError(Exception):
-    pass
+    """Raised when a requested grammar module cannot be found."""
 
 
 class FileStorage:
+    """Simple file-based storage for YAML grammar files."""
+
     def __init__(self, path):
+        """Initialize storage with a base path.
+
+        Args:
+            path: Directory containing grammar files
+
+        """
         self.path = pathlib.Path(path)
 
     def list_modules(self):
+        """List available grammar modules by filename stem.
+
+        Returns:
+            Sorted list of module names (without .yaml extension)
+
+        """
         return sorted(fn.stem for fn in self.path.glob('*.yaml'))
 
     def resolve_module(self, name):
+        """Load and parse a grammar module from YAML file.
+
+        Args:
+            name: Module name (without .yaml extension)
+
+        Returns:
+            Parsed YAML data as Python dict
+
+        Raises:
+            ModuleNotFoundError: If the module file doesn't exist
+
+        """
         try:
             with open(self.path / f'{name}.yaml') as fi:
                 return yaml.safe_load(fi)
         except FileNotFoundError:
-            raise ModuleNotFoundError(name)
+            raise ModuleNotFoundError(name) from None
 
 
 class CompilingFileStorage(FileStorage):
+    """File storage with MessagePack compilation caching.
+
+    Compiles YAML files to MessagePack (.mp) format for faster loading.
+    """
+
     def clean(self):
+        """Remove all compiled MessagePack files."""
         for fn in self.path.glob('*.mp'):
             fn.remove()
 
     def recompile_modules(self):
+        """Recompile all YAML modules to MessagePack format."""
         self.clean()
         for fn in self.path.glob('*.yaml'):
             self.resolve_module(fn.stem)
 
     def resolve_module(self, name):
+        """Load module from compiled cache or compile from YAML.
+
+        Args:
+            name: Module name (without extension)
+
+        Returns:
+            Parsed module data
+
+        """
         compiled_fn = self.path / f'{name}.mp'
         try:
             with open(compiled_fn, 'rb') as fi:
@@ -47,9 +91,23 @@ class CompilingFileStorage(FileStorage):
 
 
 class CachedFileStorage(FileStorage):
+    """File storage with in-memory caching.
+
+    Caches parsed modules in memory to avoid repeated file I/O.
+    """
+
     _modules = {}
 
     def resolve_module(self, name):
+        """Load module from memory cache or file.
+
+        Args:
+            name: Module name (without extension)
+
+        Returns:
+            Deep copy of cached module data
+
+        """
         try:
             return deepcopy(self._modules[name])
         except KeyError:
@@ -59,9 +117,24 @@ class CachedFileStorage(FileStorage):
 
 
 class CompilingCachedFileStorage(CompilingFileStorage):
+    """File storage with both compilation and memory caching.
+
+    Combines MessagePack compilation with in-memory caching for
+    maximum performance.
+    """
+
     _modules = {}
 
     def resolve_module(self, name):
+        """Load module from memory cache, compiled cache, or source file.
+
+        Args:
+            name: Module name (without extension)
+
+        Returns:
+            Module data loaded from most efficient available source
+
+        """
         try:
             return msgpack.loads(self._modules[name], raw=False)
         except KeyError:

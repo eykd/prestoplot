@@ -1,3 +1,5 @@
+"""Database objects for grammar value storage and access."""
+
 import logging
 import math
 
@@ -6,13 +8,39 @@ from .texts import is_text
 
 
 class Database:
+    """Dynamic database for grammar values with attribute-based access.
+
+    Provides lazy evaluation and caching of values based on factory functions.
+    Each attribute access creates a new seeded context for reproducible results.
+    """
+
     def __init__(self, factory, grammar_path, context):
+        """Initialize database with factory function and context.
+
+        Args:
+            factory: Function that generates values from context
+            grammar_path: Path identifier for the grammar stanza
+            context: Grammar rendering context
+
+        """
         self.factory = factory
         self.context = context
         self.grammar_path = grammar_path
         self.cache = {}
 
     def __getattr__(self, attr):
+        """Get attribute value with lazy evaluation and caching.
+
+        Creates a new seeded context for each unique attribute name
+        to ensure reproducible but varied results.
+
+        Args:
+            attr: Attribute name to access
+
+        Returns:
+            Cached or newly generated value for the attribute
+
+        """
         if attr not in self.cache:
             try:
                 result = self.__dict__[attr]
@@ -27,6 +55,18 @@ class Database:
         return self.cache[attr]
 
     def __getitem__(self, key):
+        """Get item by key (delegates to __getattr__).
+
+        Args:
+            key: Key to access
+
+        Returns:
+            Value for the given key
+
+        Raises:
+            TypeError: If key access fails
+
+        """
         try:
             return getattr(self, key)
         except TypeError:
@@ -34,19 +74,59 @@ class Database:
             raise
 
     def __str__(self):
+        """Generate string representation by calling factory.
+
+        Returns:
+            String representation of generated value
+
+        """
         return str(self.factory(self.context))
 
 
 class Databag(dict):
+    """Dictionary-like container for grammar values with context.
+
+    Extends dict to provide context-aware rendering of text values.
+    """
+
     def __init__(self, grammar_path, context, *args, **kwargs):
+        """Initialize databag with context.
+
+        Args:
+            grammar_path: Path identifier for the grammar stanza
+            context: Grammar rendering context
+            *args, **kwargs: Arguments passed to dict constructor
+
+        """
         self.context = context
         self.grammar_path = grammar_path
         super().__init__(*args, **kwargs)
 
     def __getattr__(self, attr):
+        """Get attribute as dictionary key.
+
+        Args:
+            attr: Attribute name
+
+        Returns:
+            Value from dictionary
+
+        """
         return self[attr]
 
     def __getitem__(self, key):
+        """Get item with context-aware text rendering.
+
+        Args:
+            key: Dictionary key
+
+        Returns:
+            Value with text objects rendered in current context
+
+        Raises:
+            KeyError: If key not found
+
+        """
         try:
             value = super().__getitem__(str(key))
         except KeyError:
@@ -59,12 +139,37 @@ class Databag(dict):
 
 
 class Datalist(list):
+    """List-like container for grammar values with context.
+
+    Extends list to provide context-aware rendering of text values.
+    """
+
     def __init__(self, grammar_path, context, *args, **kwargs):
+        """Initialize datalist with context.
+
+        Args:
+            grammar_path: Path identifier for the grammar stanza
+            context: Grammar rendering context
+            *args, **kwargs: Arguments passed to list constructor
+
+        """
         self.context = context
         self.grammar_path = grammar_path
         super().__init__(*args, **kwargs)
 
     def __getitem__(self, idx):
+        """Get item with context-aware text rendering.
+
+        Args:
+            idx: List index
+
+        Returns:
+            Value with text objects rendered in current context
+
+        Raises:
+            KeyError: If index not found (note: should be IndexError)
+
+        """
         try:
             value = super().__getitem__(idx)
         except KeyError:
@@ -77,7 +182,26 @@ class Datalist(list):
 
 
 def choose(items):
+    """Create a factory that randomly chooses from items (with replacement).
+
+    Args:
+        items: List of items to choose from
+
+    Returns:
+        Factory function that chooses random item from list
+
+    """
+
     def chooser(context):
+        """Choose random item from list.
+
+        Args:
+            context: Grammar rendering context containing seed
+
+        Returns:
+            Randomly chosen and rendered item
+
+        """
         rng = seeds.get_rng(context['seed'])
         result = rng.choice(items)
         if is_text(result):
@@ -88,7 +212,26 @@ def choose(items):
 
 
 def pick(items):
+    """Create a factory that picks from items without replacement.
+
+    Args:
+        items: Mutable list of items to pick from
+
+    Returns:
+        Factory function that picks and removes random item from list
+
+    """
+
     def picker(context):
+        """Pick and remove random item from list.
+
+        Args:
+            context: Grammar rendering context containing seed
+
+        Returns:
+            Randomly picked and rendered item (removed from source list)
+
+        """
         rng = seeds.get_rng(context['seed'])
         if len(items) > 1:
             idx = rng.randint(0, len(items) - 1)
@@ -103,7 +246,26 @@ def pick(items):
 
 
 def markovify(items):
+    """Create a factory that generates text using Markov chains.
+
+    Args:
+        items: List of text items to build Markov model from
+
+    Returns:
+        Factory function that generates Markov chain text
+
+    """
+
     def generator(context):
+        """Generate text using Markov chain model.
+
+        Args:
+            context: Grammar rendering context with optional markov settings
+
+        Returns:
+            Generated text based on Markov model of input items
+
+        """
         gen = markov.NameGenerator(items, chainlen=context.get('markov_chainlen', 2))
 
         return gen.get_random_name(
@@ -114,4 +276,14 @@ def markovify(items):
 
 
 def pareto_int(rng, shape=1):
+    """Generate integer from Pareto distribution.
+
+    Args:
+        rng: Random number generator
+        shape: Shape parameter for Pareto distribution
+
+    Returns:
+        Integer value from Pareto distribution
+
+    """
     return math.floor(rng.paretovariate(shape))

@@ -1,3 +1,5 @@
+"""HTTP server for serving grammar-generated content."""
+
 import logging
 import traceback
 from http.server import BaseHTTPRequestHandler
@@ -9,10 +11,29 @@ from . import storages, story
 
 
 def create_handler(oracle_path: Path, markov_start: int, markov_chainlen: int):
+    """Create HTTP request handler for serving grammar content.
+
+    Args:
+        oracle_path: Path to the grammar file to serve
+        markov_start: Characters to start Markov chains with (unused)
+        markov_chainlen: Length of Markov chain links (unused)
+
+    Returns:
+        HTTPRequestHandler class configured for the given oracle
+
+    """
+
     class HTTPRequestHandler(BaseHTTPRequestHandler):
+        """HTTP request handler that serves grammar-generated HTML content."""
+
         oracle_storage = storages.FileStorage(oracle_path.parent)
 
         def do_GET(self):
+            """Handle GET requests by generating and serving grammar content.
+
+            Generates content from the configured oracle and serves it as
+            an HTML page with Markdown formatting.
+            """
             kwargs = {}
 
             try:
