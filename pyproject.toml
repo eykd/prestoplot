@@ -1,3 +1,113 @@
+[project]
+name = "prestoplot"
+description = "Generative grammars for idea generation."
+readme = "README.rst"
+authors = [
+    { name = "David Eyk", email = "david@eykd.net" }
+]
+
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+]
+
+dynamic = ["version"]
+
+requires-python = ">=3.9"
+dependencies = [
+    "msgpack",
+    "pyyaml",
+    "jinja2",
+    "funcy",
+    "click",
+    "Markdown",
+]
+
+[project.scripts]
+presto = "prestoplot.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/eykd/prestoplot"
+Issues = "https://github.com/eykd/prestoplot/issues"
+Repository = "https://github.com/eykd/prestoplot"
+
+
 [build-system]
-requires = ["setuptools>=42"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.hatch.build.hooks.version]
+path = "src/prestoplot/_version.py"
+template = '''
+version = "{version}"
+'''
+
+
+[tool]
+[tool.uv-dynamic-versioning]
+vcs = "git"
+style = "pep440"
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 88
+
+[tool.pytest.ini_options]
+addopts = []
+
+[tool.coverage.run]
+source = ["src/"]
+omit = ["setup.py", "versioneer.py", "src/prestoplot/_version.py"]
+patch = ["subprocess"]
+
+[tool.versioneer]
+VCS = "git"
+style = "pep440"
+versionfile_source = "src/prestoplot/_version.py"
+versionfile_build = "prestoplot/_version.py"
+tag_prefix = ""
+
+[tool.ruff]
+exclude = [
+    ".git",
+    "venv",
+    "dist",
+    "__pycache__",
+]
+ignore = [
+]
+line-length = 88
+select = [
+    "E",
+    "F",
+    "W",
+]
+
+[dependency-groups]
+dev = [
+    "ipython>=8.18.1",
+    "pdbpp>=0.11.7",
+    "pre-commit>=4.3.0",
+    "ruff>=0.12.8",
+    "twine>=6.1.0",
+]
+test = [
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "pytest-profiling>=1.8.1",
+    "pytest-random-order>=1.2.0",
+    "pytest-xdist>=3.8.0",
+    "ruff>=0.12.8",
+]

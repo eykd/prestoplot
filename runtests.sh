@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 set -x
-pytest \
+exec uv run python -m pytest \
     --failed-first \
     --exitfirst \
     --cov=src \

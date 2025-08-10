@@ -1,8 +1,0 @@
--r requirements-test.txt
-ipython
-pdbpp
-pre-commit
-twine
-black
-tox
-pip-tools
