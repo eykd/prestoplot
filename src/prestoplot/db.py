@@ -20,7 +20,7 @@ class Database:
                 if hasattr(str, attr):
                     result = getattr(str(self), attr)
                 else:
-                    seed = f"{self.context['seed']}-{attr}"
+                    seed = f'{self.context["seed"]}-{attr}'
                     with contexts.update_context(self.context, key=attr, seed=seed):
                         result = self.factory(self.context)
             self.cache[attr] = result
@@ -30,7 +30,7 @@ class Database:
         try:
             return getattr(self, key)
         except TypeError:
-            logging.exception(f"No key {key!r} in {self!r}")
+            logging.exception(f'No key {key!r} in {self!r}')
             raise
 
     def __str__(self):
@@ -50,7 +50,7 @@ class Databag(dict):
         try:
             value = super().__getitem__(str(key))
         except KeyError:
-            logging.error(f"No key {key!r} in {', '.join(self.keys())}")
+            logging.error(f'No key {key!r} in {", ".join(self.keys())}')
             raise
         if is_text(value):
             value = value.render(self.context)
@@ -68,7 +68,7 @@ class Datalist(list):
         try:
             value = super().__getitem__(idx)
         except KeyError:
-            logging.error(f"No index {idx!r} in {', '.join(self)}")
+            logging.error(f'No index {idx!r} in {", ".join(self)}')
             raise
         if is_text(value):
             value = value.render(self.context)
@@ -78,7 +78,7 @@ class Datalist(list):
 
 def choose(items):
     def chooser(context):
-        rng = seeds.get_rng(context["seed"])
+        rng = seeds.get_rng(context['seed'])
         result = rng.choice(items)
         if is_text(result):
             result = result.render(context)
@@ -89,7 +89,7 @@ def choose(items):
 
 def pick(items):
     def picker(context):
-        rng = seeds.get_rng(context["seed"])
+        rng = seeds.get_rng(context['seed'])
         if len(items) > 1:
             idx = rng.randint(0, len(items) - 1)
         else:
@@ -104,10 +104,10 @@ def pick(items):
 
 def markovify(items):
     def generator(context):
-        gen = markov.NameGenerator(items, chainlen=context.get("markov_chainlen", 2))
+        gen = markov.NameGenerator(items, chainlen=context.get('markov_chainlen', 2))
 
         return gen.get_random_name(
-            start=context.get("start_markov", ""), seed=context["seed"]
+            start=context.get('start_markov', ''), seed=context['seed']
         )
 
     return generator

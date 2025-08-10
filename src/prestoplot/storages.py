@@ -14,11 +14,11 @@ class FileStorage:
         self.path = pathlib.Path(path)
 
     def list_modules(self):
-        return sorted(fn.stem for fn in self.path.glob("*.yaml"))
+        return sorted(fn.stem for fn in self.path.glob('*.yaml'))
 
     def resolve_module(self, name):
         try:
-            with open(self.path / f"{name}.yaml") as fi:
+            with open(self.path / f'{name}.yaml') as fi:
                 return yaml.safe_load(fi)
         except FileNotFoundError:
             raise ModuleNotFoundError(name)
@@ -26,22 +26,22 @@ class FileStorage:
 
 class CompilingFileStorage(FileStorage):
     def clean(self):
-        for fn in self.path.glob("*.mp"):
+        for fn in self.path.glob('*.mp'):
             fn.remove()
 
     def recompile_modules(self):
         self.clean()
-        for fn in self.path.glob("*.yaml"):
+        for fn in self.path.glob('*.yaml'):
             self.resolve_module(fn.stem)
 
     def resolve_module(self, name):
-        compiled_fn = self.path / f"{name}.mp"
+        compiled_fn = self.path / f'{name}.mp'
         try:
-            with open(compiled_fn, "rb") as fi:
+            with open(compiled_fn, 'rb') as fi:
                 return msgpack.load(fi, raw=False)
         except (FileNotFoundError, TypeError, ValueError, msgpack.ExtraData):
             mod = super().resolve_module(name)
-            with open(compiled_fn, "wb") as fo:
+            with open(compiled_fn, 'wb') as fo:
                 msgpack.dump(mod, fo)
             return mod
 

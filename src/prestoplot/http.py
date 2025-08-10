@@ -20,16 +20,16 @@ def create_handler(oracle_path: Path, markov_start: int, markov_chainlen: int):
                     story.render_story(self.oracle_storage, oracle_path.stem, **kwargs)
                 )
             except Exception:
-                logging.exception("Error!")
+                logging.exception('Error!')
                 self.send_response(500)
                 self.wfile.write(
-                    f"<h1>Error</h1><pre>{traceback.format_exc()}</pre>".encode("utf-8")
+                    f'<h1>Error</h1><pre>{traceback.format_exc()}</pre>'.encode('utf-8')
                 )
 
             else:
                 self.send_response(200)  # Success!
 
-                self.send_header("content-type", "text/html")
+                self.send_header('content-type', 'text/html')
                 self.end_headers()
 
                 text_out = f"""
@@ -62,6 +62,6 @@ def create_handler(oracle_path: Path, markov_start: int, markov_chainlen: int):
 
                 """
 
-                self.wfile.write(text_out.encode("utf-8"))
+                self.wfile.write(text_out.encode('utf-8'))
 
     return HTTPRequestHandler

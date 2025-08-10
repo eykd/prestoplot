@@ -8,38 +8,38 @@ jinja2_env = jinja2.Environment(undefined=jinja2.DebugUndefined)
 
 def render_ftemplate(tmpl, grammar_path, context):
     global_ctx = {**context}
-    local_ctx = {"result": tmpl}
+    local_ctx = {'result': tmpl}
     try:
         exec("result = eval(f'''f{result!r}''')", global_ctx, local_ctx)
     except Exception as exc:
-        logging.error(f"{exc}--Could not render template in {grammar_path}:")
-        logging.error(f"Template:\n{tmpl}")
+        logging.error(f'{exc}--Could not render template in {grammar_path}:')
+        logging.error(f'Template:\n{tmpl}')
         raise
-    return RenderedStr(local_ctx["result"])
+    return RenderedStr(local_ctx['result'])
 
 
 def render_jinja2(tmpl, grammar_path, context):
     try:
         return RenderedStr(jinja2_env.from_string(tmpl).render(context))
     except jinja2.TemplateError as exc:
-        logging.error(f"{exc}--Could not render Jinja2 template in {grammar_path}:")
-        logging.error(f"Template:\n{tmpl}")
-        msg = f"Could not render Jinja2 template ({exc}): "
-        if hasattr(exc, "source") and exc.source:
+        logging.error(f'{exc}--Could not render Jinja2 template in {grammar_path}:')
+        logging.error(f'Template:\n{tmpl}')
+        msg = f'Could not render Jinja2 template ({exc}): '
+        if hasattr(exc, 'source') and exc.source:
             lineno = exc.lineno
             line = exc.source.splitlines()[lineno - 1]
-            logging.error(f"{grammar_path}, line {lineno}")
-            logging.error(f"--> {line}")
-            msg += f"\n{grammar_path}, line {lineno}"
-            msg += f"\n--> {line}"
+            logging.error(f'{grammar_path}, line {lineno}')
+            logging.error(f'--> {line}')
+            msg += f'\n{grammar_path}, line {lineno}'
+            msg += f'\n--> {line}'
         else:
-            msg += f"\n{grammar_path}"
-            msg += f"\n{tmpl}"
+            msg += f'\n{grammar_path}'
+            msg += f'\n{tmpl}'
         raise ValueError(msg)
 
 
 class Text:
-    vowels = set("aeiou")
+    vowels = set('aeiou')
 
     def __init__(self, value, grammar_path, context, transformer=identity):
         self.value = value
@@ -50,9 +50,9 @@ class Text:
     @cached_property
     def an(self):
         if str(self.value)[0].lower() in self.vowels:
-            return "an"
+            return 'an'
         else:
-            return "a"
+            return 'a'
 
     a = an
 
@@ -109,14 +109,14 @@ is_text = isa(Text)
 
 
 class RenderedStr(str):
-    vowels = set("aeiou")
+    vowels = set('aeiou')
 
     @cached_property
     def an(self):
         if self[0].lower() in self.vowels:
-            return "an"
+            return 'an'
         else:
-            return "a"
+            return 'a'
 
     a = an
 
