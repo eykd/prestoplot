@@ -28,7 +28,8 @@ def test_file_storage_should_store_path(fs):
 
 def test_file_storage_should_list_modules(fs):
     result = fs.list_modules()
-    assert result == ['characters', 'characters_jinja', 'names']
+    expected = ['characters', 'characters_jinja', 'names', 'test_ratchet']
+    assert result == expected
 
 
 def test_file_storage_resolve_module_should_resolve_valid_names(fs):

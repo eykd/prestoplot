@@ -275,6 +275,44 @@ def markovify(items):
     return generator
 
 
+def ratchet(items):
+    """Create a factory that returns items sequentially with state tracking.
+
+    Returns the first item on first call, second on second call, etc.
+    Cycles back to the beginning when all items have been returned.
+
+    Args:
+        items: List of items to return sequentially
+
+    Returns:
+        Factory function that returns items in sequential order
+
+    """
+    state = {'index': 0}
+
+    def ratcheter(context):
+        """Return next item in sequence, cycling back to start when needed.
+
+        Args:
+            context: Grammar rendering context (unused for ratcheting)
+
+        Returns:
+            Next item in the sequence, rendered if it's a text object
+
+        """
+        if not items:
+            return ''
+
+        result = items[state['index']]
+        state['index'] = (state['index'] + 1) % len(items)
+
+        if is_text(result):
+            result = result.render(context)
+        return result
+
+    return ratcheter
+
+
 def pareto_int(rng, shape=1):
     """Generate integer from Pareto distribution.
 

@@ -1,0 +1,8 @@
+Begin:
+  - "{Colors.first} {Colors.second} {Colors.third} {Colors.fourth}"
+
+Colors:
+  - mode: ratchet
+  - red
+  - blue
+  - green
