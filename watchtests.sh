@@ -1,8 +1,3 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -x
-./runtests.sh $@
-watchmedo shell-command \
-    --patterns="*.py" \
-    --recursive \
-    --command="./runtests.sh $@" \
-    .
+while sleep 1; do find src/ -iname '*.py' | entr -d ./runtests.sh; done
