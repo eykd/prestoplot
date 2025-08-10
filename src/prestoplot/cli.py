@@ -122,7 +122,7 @@ def run(path, count, markov_start, markov_chainlen, wrap, wrap_length, seed=None
 )
 @click.option("--port", default=5555, help="Port to listen at for HTTP requests.")
 def http(path: pathlib.Path, markov_start: int, markov_chainlen: int, port: int):
-    """Parse a YAML generative grammar oracle file and serve a generator at the given port.
+    """Parse a YAML generative grammar oracle file and serve it at the given port.
 
     The "oracle" consulted directly must include a `Begin:` stanza.
 
