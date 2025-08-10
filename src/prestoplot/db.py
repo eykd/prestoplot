@@ -2,6 +2,8 @@
 
 import logging
 import math
+from collections.abc import Callable
+from typing import Any
 
 from . import contexts, markov, seeds
 from .texts import is_text
@@ -14,7 +16,12 @@ class Database:
     Each attribute access creates a new seeded context for reproducible results.
     """
 
-    def __init__(self, factory, grammar_path, context):
+    def __init__(
+        self,
+        factory: Callable[[dict[str, Any]], Any],
+        grammar_path: str,
+        context: dict[str, Any],
+    ) -> None:
         """Initialize database with factory function and context.
 
         Args:
@@ -28,7 +35,7 @@ class Database:
         self.grammar_path = grammar_path
         self.cache = {}
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         """Get attribute value with lazy evaluation and caching.
 
         Creates a new seeded context for each unique attribute name
@@ -54,7 +61,7 @@ class Database:
             self.cache[attr] = result
         return self.cache[attr]
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         """Get item by key (delegates to __getattr__).
 
         Args:
@@ -73,7 +80,7 @@ class Database:
             logging.exception(f'No key {key!r} in {self!r}')
             raise
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Generate string representation by calling factory.
 
         Returns:
@@ -89,7 +96,9 @@ class Databag(dict):
     Extends dict to provide context-aware rendering of text values.
     """
 
-    def __init__(self, grammar_path, context, *args, **kwargs):
+    def __init__(
+        self, grammar_path: str, context: dict[str, Any], *args: Any, **kwargs: Any
+    ) -> None:
         """Initialize databag with context.
 
         Args:
@@ -102,7 +111,7 @@ class Databag(dict):
         self.grammar_path = grammar_path
         super().__init__(*args, **kwargs)
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         """Get attribute as dictionary key.
 
         Args:
@@ -114,7 +123,7 @@ class Databag(dict):
         """
         return self[attr]
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         """Get item with context-aware text rendering.
 
         Args:
@@ -144,7 +153,9 @@ class Datalist(list):
     Extends list to provide context-aware rendering of text values.
     """
 
-    def __init__(self, grammar_path, context, *args, **kwargs):
+    def __init__(
+        self, grammar_path: str, context: dict[str, Any], *args: Any, **kwargs: Any
+    ) -> None:
         """Initialize datalist with context.
 
         Args:
@@ -157,7 +168,7 @@ class Datalist(list):
         self.grammar_path = grammar_path
         super().__init__(*args, **kwargs)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> Any:
         """Get item with context-aware text rendering.
 
         Args:
@@ -181,7 +192,7 @@ class Datalist(list):
         return value
 
 
-def choose(items):
+def choose(items: list[Any]) -> Callable[[dict[str, Any]], Any]:
     """Create a factory that randomly chooses from items (with replacement).
 
     Args:
@@ -192,7 +203,7 @@ def choose(items):
 
     """
 
-    def chooser(context):
+    def chooser(context: dict[str, Any]) -> Any:
         """Choose random item from list.
 
         Args:
@@ -211,7 +222,7 @@ def choose(items):
     return chooser
 
 
-def pick(items):
+def pick(items: list[Any]) -> Callable[[dict[str, Any]], Any]:
     """Create a factory that picks from items without replacement.
 
     Args:
@@ -222,7 +233,7 @@ def pick(items):
 
     """
 
-    def picker(context):
+    def picker(context: dict[str, Any]) -> Any:
         """Pick and remove random item from list.
 
         Args:
@@ -245,7 +256,7 @@ def pick(items):
     return picker
 
 
-def markovify(items):
+def markovify(items: list[str]) -> Callable[[dict[str, Any]], str]:
     """Create a factory that generates text using Markov chains.
 
     Args:
@@ -256,7 +267,7 @@ def markovify(items):
 
     """
 
-    def generator(context):
+    def generator(context: dict[str, Any]) -> str:
         """Generate text using Markov chain model.
 
         Args:
@@ -275,7 +286,7 @@ def markovify(items):
     return generator
 
 
-def ratchet(items):
+def ratchet(items: list[Any]) -> Callable[[dict[str, Any]], Any]:
     """Create a factory that returns items sequentially with state tracking.
 
     Returns the first item on first call, second on second call, etc.
@@ -290,7 +301,7 @@ def ratchet(items):
     """
     state = {'index': 0}
 
-    def ratcheter(context):
+    def ratcheter(context: dict[str, Any]) -> Any:
         """Return next item in sequence, cycling back to start when needed.
 
         Args:
@@ -313,7 +324,7 @@ def ratchet(items):
     return ratcheter
 
 
-def pareto_int(rng, shape=1):
+def pareto_int(rng: Any, shape: float = 1) -> int:
     """Generate integer from Pareto distribution.
 
     Args:

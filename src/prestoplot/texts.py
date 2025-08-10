@@ -1,6 +1,8 @@
 """Text rendering and template processing."""
 
 import logging
+from collections.abc import Callable
+from typing import Any
 
 import jinja2
 from funcy import cached_property, identity, isa
@@ -8,7 +10,9 @@ from funcy import cached_property, identity, isa
 jinja2_env = jinja2.Environment(undefined=jinja2.DebugUndefined)
 
 
-def render_ftemplate(tmpl, grammar_path, context):
+def render_ftemplate(
+    tmpl: str, grammar_path: str, context: dict[str, Any]
+) -> 'RenderedStr':
     """Render template using Python f-string evaluation.
 
     Args:
@@ -34,7 +38,9 @@ def render_ftemplate(tmpl, grammar_path, context):
     return RenderedStr(local_ctx['result'])
 
 
-def render_jinja2(tmpl, grammar_path, context):
+def render_jinja2(
+    tmpl: str, grammar_path: str, context: dict[str, Any]
+) -> 'RenderedStr':
     """Render template using Jinja2 template engine.
 
     Args:
@@ -77,7 +83,13 @@ class Text:
 
     vowels = set('aeiou')
 
-    def __init__(self, value, grammar_path, context, transformer=identity):
+    def __init__(
+        self,
+        value: Any,
+        grammar_path: str,
+        context: dict[str, Any],
+        transformer: Callable[[Any], Any] = identity,
+    ) -> None:
         """Initialize text object.
 
         Args:
@@ -93,7 +105,7 @@ class Text:
         self.transformer = transformer
 
     @cached_property
-    def an(self):
+    def an(self) -> str:
         """Get appropriate indefinite article ('a' or 'an').
 
         Returns:
@@ -107,7 +119,7 @@ class Text:
     a = an
 
     @cached_property
-    def An(self):
+    def An(self) -> str:
         """Get capitalized indefinite article ('A' or 'An').
 
         Returns:
@@ -118,7 +130,7 @@ class Text:
 
     A = An
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Get string representation by rendering.
 
         Returns:
@@ -127,7 +139,7 @@ class Text:
         """
         return self.render()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Get string representation of underlying value.
 
         Returns:
@@ -136,7 +148,7 @@ class Text:
         """
         return repr(self.value)
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         """Delegate string methods to underlying value.
 
         Args:
@@ -150,7 +162,7 @@ class Text:
             return getattr(self.value, attr)
         return super().__getattr__(attr)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Get hash of underlying value.
 
         Returns:
@@ -159,7 +171,7 @@ class Text:
         """
         return hash(self.value)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Compare with other object as strings.
 
         Args:
@@ -171,7 +183,7 @@ class Text:
         """
         return str(self) == other
 
-    def render(self, context=None):
+    def render(self, context: dict[str, Any] | None = None) -> 'RenderedStr':
         """Render text by applying transformer.
 
         Args:
@@ -192,12 +204,14 @@ class RenderableText(Text):
 
     def __init__(
         self,
-        value,
-        grammar_path,
-        context,
-        transformer=identity,
-        render_strategy=render_ftemplate,
-    ):
+        value: Any,
+        grammar_path: str,
+        context: dict[str, Any],
+        transformer: Callable[[Any], Any] = identity,
+        render_strategy: Callable[
+            [str, str, dict[str, Any]], 'RenderedStr'
+        ] = render_ftemplate,
+    ) -> None:
         """Initialize renderable text.
 
         Args:
@@ -211,7 +225,7 @@ class RenderableText(Text):
         super().__init__(value, grammar_path, context, transformer=transformer)
         self._render = render_strategy
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Get string representation by rendering with context.
 
         Returns:
@@ -220,7 +234,7 @@ class RenderableText(Text):
         """
         return self.render(self.context)
 
-    def render(self, context=None):
+    def render(self, context: dict[str, Any] | None = None) -> 'RenderedStr':
         """Render text using configured template strategy.
 
         Args:
@@ -248,7 +262,7 @@ class RenderedStr(str):
     vowels = set('aeiou')
 
     @cached_property
-    def an(self):
+    def an(self) -> str:
         """Get appropriate indefinite article ('a' or 'an').
 
         Returns:
@@ -262,7 +276,7 @@ class RenderedStr(str):
     a = an
 
     @cached_property
-    def An(self):
+    def An(self) -> str:
         """Get capitalized indefinite article ('A' or 'An').
 
         Returns:
