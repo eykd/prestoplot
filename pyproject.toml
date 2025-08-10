@@ -55,7 +55,10 @@ version = '{version}'
 [tool]
 [tool.uv-dynamic-versioning]
 vcs = "git"
+dirty = true
 style = "pep440"
+pattern = "default-unprefixed"
+
 
 [tool.isort]
 multi_line_output = 3
