@@ -115,6 +115,33 @@ When writing Python code (`*.py`), follow these testing practices:
 
   * Example: `./scripts/runtests.sh tests/test_config_loader.py`
 
+## Unit testing with pytest
+
+When writing unit tests for Python libraries, follow these pytest best practices:
+
+* Test public APIs and behaviors, not implementation details.
+* Focus on testing function contracts: inputs, outputs, and side effects.
+* Use pytest's built-in `assert` statements rather than unittest-style assertions.
+* Structure tests with arrange-act-assert pattern for clarity.
+* Test edge cases: empty inputs, None values, boundary conditions, and error states.
+* Use parametrized tests for testing multiple similar cases:
+  ```python
+  @pytest.mark.parametrize("input_val,expected", [(1, 2), (3, 4)])
+  def test_increment(input_val, expected):
+      assert increment(input_val) == expected
+  ```
+* Mock external dependencies using `pytest-mock` or `unittest.mock`.
+* Test exception handling explicitly with `pytest.raises()`:
+  ```python
+  def test_raises_value_error():
+      with pytest.raises(ValueError, match="invalid input"):
+          parse_config("bad_input")
+  ```
+* Use fixtures for test data and setup, preferring function-scoped fixtures.
+* Test one behavior per test function to maintain clarity and isolation.
+* Avoid testing private methods directly; test through public interfaces.
+* Do not test third-party library functionality; focus on your code's usage of it.
+
 ## Test failure resolution
 
 When tests fail during development, always fix them immediately:
