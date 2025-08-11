@@ -30,7 +30,7 @@ def main(debug: bool, pdb: bool) -> None:  # noqa: FBT001
         @atexit.register
         def debug_on_exit() -> None:
             """Enter debugger on exit if an exception occurred."""
-            if hasattr(sys, 'last_traceback'):
+            if hasattr(sys, 'last_traceback'):  # pragma: no branch
                 import pdb
 
                 pdb.pm()
@@ -112,7 +112,7 @@ def run(
                 if line.strip():
                     for new_line in textwrap.wrap(line, wrap_length):
                         click.echo(new_line)
-                else:
+                else:  # pragma: no cover
                     click.echo(line)
         if n + 1 != count:
             click.echo('\n---\n')
