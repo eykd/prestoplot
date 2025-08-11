@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./runtests.sh:*)"
+      "Bash(./runtests.sh:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   }
