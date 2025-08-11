@@ -70,7 +70,7 @@ line_length = 88
 [tool.pytest.ini_options]
 addopts = [
     "--cov",
-    "--cov-report=term:skip-covered",
+    "--cov-report=term-missing:skip-covered",
     "--no-cov-on-fail",
     "--strict-markers",
     "--strict-config",

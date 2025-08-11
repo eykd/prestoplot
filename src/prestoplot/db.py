@@ -83,7 +83,7 @@ class Database:
         """
         try:
             return getattr(self, key)
-        except TypeError:
+        except TypeError:  # pragma: no cover
             logger.exception('No key %r in %s', key, self)
             raise
 
@@ -150,7 +150,9 @@ class Databag(dict):
         try:
             value = super().__getitem__(str(key))
         except KeyError:
-            logger.exception('No key %r in %s', key, ', '.join(self.keys()))
+            logger.exception(
+                'No key %r in %s', key, ', '.join(str(k) for k in self.keys())
+            )
             raise
         if is_text(value):
             value = value.render(self.context)
@@ -198,8 +200,10 @@ class Datalist(list):
         """
         try:
             value = super().__getitem__(idx)
-        except KeyError:
-            logger.exception('No index %r in %s', idx, ', '.join(self))
+        except KeyError:  # pragma: no cover
+            logger.exception(
+                'No index %r in %s', idx, ', '.join(str(item) for item in self)
+            )
             raise
         if is_text(value):
             value = value.render(self.context)

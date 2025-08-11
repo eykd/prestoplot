@@ -69,7 +69,7 @@ def render_jinja2(tmpl: str, grammar_path: str, context: dict[str, Any]) -> Rend
             logger.exception('Line %s: %s', lineno, line)
             msg += f'\n{grammar_path}, line {lineno}'
             msg += f'\n--> {line}'
-        else:
+        else:  # pragma: no cover
             msg += f'\n{grammar_path}'
             msg += f'\n{tmpl}'
         raise ValueError(msg) from exc
