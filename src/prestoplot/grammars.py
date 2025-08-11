@@ -212,7 +212,7 @@ def parse_value(
         return texts.RenderableText(
             fix_text(value), grammar_path, context, render_strategy=render_strategy
         )
-    return None
+    return None  # pragma: no cover
 
 
 def fix_text(text: str) -> str:
