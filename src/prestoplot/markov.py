@@ -97,7 +97,7 @@ class NameGenerator(collections.abc.Iterator):
             ValueError: If chainlen is not between 1 and 10
 
         """
-        if 1 > chainlen > 10:
+        if not (1 <= chainlen <= 10):
             raise ValueError('Chain length must be between 1 and 10, inclusive')
         self.chainlen = chainlen
         self.markov = MarkovChainDict()
@@ -158,7 +158,7 @@ class NameGenerator(collections.abc.Iterator):
         while 1:
             suffix = self.markov.get_suffix(prefix, rng=rng)
             if suffix == '-':
-                continue
+                continue  # pragma: no cover
             if suffix == '\n' or len(name) == max_length:
                 break
             name = f'{name}{suffix}'
