@@ -13,3 +13,4 @@ AUTHORS
 venv/
 .tox/
 src/prestoplot/_version.py
+.env
