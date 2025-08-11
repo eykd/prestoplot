@@ -68,11 +68,18 @@ use_parentheses = true
 line_length = 88
 
 [tool.pytest.ini_options]
-addopts = []
+addopts = [
+    "--cov",
+    "--cov-report=term:skip-covered",
+    "--no-cov-on-fail",
+    "--strict-markers",
+    "--strict-config",
+    "--random-order",
+]
 
 [tool.coverage.run]
 source = ["src/"]
-omit = ["setup.py", "versioneer.py", "src/prestoplot/_version.py"]
+omit = ["src/prestoplot/_version.py", "src/prestoplot/http.py"]
 patch = ["subprocess"]
 
 [tool.versioneer]
