@@ -64,7 +64,7 @@ class CompilingFileStorage(FileStorage):
     def clean(self) -> None:
         """Remove all compiled MessagePack files."""
         for fn in self.path.glob('*.mp'):
-            fn.remove()
+            fn.unlink()
 
     def recompile_modules(self) -> None:
         """Recompile all YAML modules to MessagePack format."""
@@ -140,7 +140,7 @@ class CompilingCachedFileStorage(CompilingFileStorage):
         """
         try:
             return msgpack.loads(self._modules[name], raw=False)
-        except KeyError:
+        except (KeyError, TypeError, ValueError, msgpack.ExtraData):
             mod = super().resolve_module(name)
             self._modules[name] = msgpack.dumps(mod)
             return self.resolve_module(name)
