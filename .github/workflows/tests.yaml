@@ -33,6 +33,10 @@ jobs:
         run: |
           uv run pytest --cov
 
+      - name: Run lint
+        run: |
+          uv run ruff check
+
       - name: Generate LCOV report
         run: |
           uv run coverage lcov -o coverage/lcov.info
