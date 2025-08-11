@@ -115,6 +115,26 @@ When writing Python code (`*.py`), follow these testing practices:
 
   * Example: `./scripts/runtests.sh tests/test_config_loader.py`
 
+## Test organization with classes
+
+When organizing tests in pytest, group related tests using `TestX` classes:
+
+* Use `TestX` classes to group tests for the same module, function, or behavior.
+* Name test classes with descriptive titles like `TestGrammarParser` or `TestFileStorage`.
+* Do not inherit from `unittest.TestCase` since pytest handles plain classes.
+* Place setup and teardown logic in `setup_method` and `teardown_method`.
+* Example:
+  ```python
+  class TestGrammarParser:
+      @pytest.fixture
+      def parser(self) -> GrammarParser:
+          return GrammarParser()
+
+      def test_parses_simple_grammar(self, parser: GrammarParser) -> None:
+          result = parser.parse("Begin: hello")
+          assert result["Begin"] == ["hello"]
+  ```
+
 ## Unit testing with pytest
 
 When writing unit tests for Python libraries, follow these pytest best practices:
