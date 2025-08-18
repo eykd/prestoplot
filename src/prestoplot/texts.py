@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar
 
 import jinja2
@@ -75,6 +76,7 @@ def render_jinja2(tmpl: str, grammar_path: str, context: dict[str, Any]) -> Rend
         raise ValueError(msg) from exc
 
 
+@dataclass(slots=True)
 class Text:
     """Base text class with article generation and string delegation.
 
@@ -82,30 +84,17 @@ class Text:
     to the underlying value.
     """
 
+    value: Any
+    grammar_path: str
+    context: dict[str, Any]
+    transformer: Callable[[Any], Any] = identity
+
+    _an: str = field(init=False)
+    _An: str = field(init=False)
+
     vowels: ClassVar[set[str]] = set('aeiou')
 
-    def __init__(
-        self,
-        value: Any,  # noqa: ANN401
-        grammar_path: str,
-        context: dict[str, Any],
-        transformer: Callable[[Any], Any] = identity,
-    ) -> None:
-        """Initialize text object.
-
-        Args:
-            value: Text content
-            grammar_path: Path identifier for the grammar stanza
-            context: Grammar rendering context
-            transformer: Function to transform the value during rendering
-
-        """
-        self.value = value
-        self.context = context
-        self.grammar_path = grammar_path
-        self.transformer = transformer
-
-    @cached_property
+    @property
     def an(self) -> str:
         """Get appropriate indefinite article ('a' or 'an').
 
@@ -113,13 +102,18 @@ class Text:
             'an' if text starts with vowel, 'a' otherwise
 
         """
-        if str(self.value)[0].lower() in self.vowels:
-            return 'an'
-        return 'a'
+        try:
+            return self._an
+        except AttributeError:
+            if str(self.value)[0].lower() in self.vowels:
+                self._an = 'an'
+            else:
+                self._an = 'a'
+            return self._an
 
     a = an
 
-    @cached_property
+    @property
     def An(self) -> str:  # noqa: N802
         """Get capitalized indefinite article ('A' or 'An').
 
@@ -127,7 +121,11 @@ class Text:
             'An' if text starts with vowel, 'A' otherwise
 
         """
-        return self.an.capitalize()
+        try:
+            return self._An
+        except AttributeError:
+            self._An = self.an.capitalize()
+            return self._An
 
     A = An
 
@@ -161,7 +159,8 @@ class Text:
         """
         if hasattr(str, attr):
             return getattr(self.value, attr)
-        return super().__getattr__(attr)
+        msg = f"'{type(self).__name__}' object has no attribute '{attr}'"
+        raise AttributeError(msg)
 
     def __hash__(self) -> int:
         """Get hash of underlying value.
@@ -197,34 +196,16 @@ class Text:
         return RenderedStr(self.transformer(self.value))
 
 
+@dataclass(slots=True)
 class RenderableText(Text):
     """Text class that supports template rendering.
 
     Extends Text with configurable template rendering strategies.
     """
 
-    def __init__(
-        self,
-        value: Any,  # noqa: ANN401
-        grammar_path: str,
-        context: dict[str, Any],
-        transformer: Callable[[Any], Any] = identity,
-        render_strategy: Callable[
-            [str, str, dict[str, Any]], RenderedStr
-        ] = render_ftemplate,
-    ) -> None:
-        """Initialize renderable text.
-
-        Args:
-            value: Text content with template syntax
-            grammar_path: Path identifier for the grammar stanza
-            context: Grammar rendering context
-            transformer: Function to transform the value during rendering
-            render_strategy: Template rendering function to use
-
-        """
-        super().__init__(value, grammar_path, context, transformer=transformer)
-        self._render = render_strategy
+    render_strategy: Callable[[str, str, dict[str, Any]], RenderedStr] = (
+        render_ftemplate
+    )
 
     def __str__(self) -> str:
         """Get string representation by rendering with context.
@@ -245,8 +226,12 @@ class RenderableText(Text):
             RenderedStr with template-rendered content
 
         """
+        # Get the transformed value from the parent class
+        transformed_value = self.transformer(self.value)
         return RenderedStr(
-            self._render(super().render(), self.grammar_path, context or self.context)
+            self.render_strategy(
+                transformed_value, self.grammar_path, context or self.context
+            )
         )
 
 
