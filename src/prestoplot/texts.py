@@ -38,8 +38,8 @@ def render_ftemplate(
     local_ctx = {'result': tmpl}
     try:
         exec("result = eval(f'''f{result!r}''')", global_ctx, local_ctx)  # noqa: S102
-    except Exception:
-        logger.exception('Could not render template %s: %s', grammar_path, tmpl)
+    except Exception as exc:
+        logger.error('Could not render template %s: %s (%s)', grammar_path, tmpl, exc)  # noqa: TRY400
         raise
     return RenderedStr(local_ctx['result'])
 
@@ -62,12 +62,14 @@ def render_jinja2(tmpl: str, grammar_path: str, context: dict[str, Any]) -> Rend
     try:
         return RenderedStr(jinja2_env.from_string(tmpl).render(context))
     except jinja2.TemplateError as exc:
-        logger.exception('Could not render Jinja2 template: %s, %s', grammar_path, tmpl)
+        logger.error(  # noqa: TRY400
+            'Could not render Jinja2 template: %s, %s (%s)', grammar_path, tmpl, exc
+        )
         msg = f'Could not render Jinja2 template ({exc}): '
         if hasattr(exc, 'source') and exc.source:
             lineno = exc.lineno
             line = exc.source.splitlines()[lineno - 1]
-            logger.exception('Line %s: %s', lineno, line)
+            logger.error('Line %s: %s', lineno, line)  # noqa: TRY400
             msg += f'\n{grammar_path}, line {lineno}'
             msg += f'\n--> {line}'
         else:  # pragma: no cover
